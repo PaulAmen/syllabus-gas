@@ -1,0 +1,119 @@
+<!-- 1. Información General -->
+<div class="section">
+    <h2>1. Información General</h2>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="codigo">Código o nombre de la asignatura:</label>
+            <input type="text" id="codigo" name="codigo" required
+                placeholder="Ingrese el código o nombre de la asignatura">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="prerrequisito">Prerrequisito:</label>
+            <input type="text" id="prerrequisito" name="prerrequisito">
+        </div>
+        <div class="form-group">
+            <label for="correquisito">Correquisito:</label>
+            <input type="text" id="correquisito" name="correquisito">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="facultad">Facultad:</label>
+            <select id="facultad" name="facultad" required>
+                <option value="">Seleccione una facultad</option>
+                <option value="Ciencias Técnicas">Ciencias Técnicas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="unidadCurricular">Unidad curricular / Eje de formación:</label>
+            <select id="unidadCurricular" name="unidadCurricular" required>
+                <option value="">Seleccione una unidad</option>
+                <option value="Básica">Básica</option>
+                <option value="Profesional">Profesional</option>
+                <option value="Complementaria">Complementaria</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="campoFormacion">Campo de formación:</label>
+            <select id="campoFormacion" name="campoFormacion" required>
+                <option value="">Seleccione un campo</option>
+                <option value="Ciencias Básicas">Ciencias Básicas</option>
+                <option value="Ciencias de la Ingeniería">Ciencias de la Ingeniería</option>
+                <option value="Ingeniería Aplicada">Ingeniería Aplicada</option>
+                <option value="Ciencias Sociales y Humanísticas">Ciencias Sociales y Humanísticas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="modalidad">Modalidad:</label>
+            <select id="modalidad" name="modalidad" required>
+                <option value="">Seleccione una modalidad</option>
+                <option value="Presencial">Presencial</option>
+                <option value="Semipresencial">Semipresencial</option>
+                <option value="Virtual">Virtual</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="periodo">Periodo académico ordinario (PAO):</label>
+            <select id="periodo" name="periodo" required>
+                <option value="">Seleccione un periodo</option>
+                <option value="Primer Semestre">Primer Semestre</option>
+                <option value="Segundo Semestre">Segundo Semestre</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="nivel">Nivel:</label>
+            <select id="nivel" name="nivel" required>
+                <option value="">Seleccione un nivel</option>
+                <option value="Primero">Primero</option>
+                <option value="Segundo">Segundo</option>
+                <option value="Tercero">Tercero</option>
+                <option value="Cuarto">Cuarto</option>
+                <option value="Quinto">Quinto</option>
+                <option value="Sexto">Sexto</option>
+                <option value="Séptimo">Séptimo</option>
+                <option value="Octavo">Octavo</option>
+                <option value="Noveno">Noveno</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="paralelos">Paralelo/s:</label>
+            <input type="text" id="paralelos" name="paralelos" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="horarioClases">Horario de clases:</label>
+            <input type="text" id="horarioClases" name="horarioClases" required>
+        </div>
+        <div class="form-group">
+            <label for="horarioTutorias">Horario para tutorías:</label>
+            <input type="text" id="horarioTutorias" name="horarioTutorias" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="nombreDocente">Profesor que imparte la asignatura:</label>
+            <input type="text" id="nombreDocente" name="nombreDocente" required>
+        </div>
+        <div class="form-group">
+            <label for="perfilDocente">Perfil del profesor:</label>
+            <textarea id="perfilDocente" name="perfilDocente" rows="3" required></textarea>
+        </div>
+    </div>
+</div>

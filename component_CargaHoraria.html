@@ -1,0 +1,60 @@
+<!-- 2. Carga Horaria -->
+<div class="section">
+    <h2>2. Carga Horaria</h2>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="totalHoras">Total de horas / créditos:</label>
+            <input type="number" id="totalHoras" name="totalHoras" required>
+        </div>
+        <div class="form-group">
+            <label for="horasDocencia">Horas de docencia (HD):</label>
+            <input type="number" id="horasDocencia" name="horasDocencia" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="horasPresencial">Horas de docencia presencial:</label>
+            <input type="number" id="horasPresencial" name="horasPresencial" required>
+        </div>
+        <div class="form-group">
+            <label for="horasSincronica">Horas de docencia sincrónica:</label>
+            <input type="number" id="horasSincronica" name="horasSincronica" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="horasPAE">Horas para práctica de aplicación y experimentación (PAE):</label>
+            <input type="number" id="horasPAE" name="horasPAE" required>
+        </div>
+        <div class="form-group">
+            <label for="horasTA">Horas de trabajo autónomo (TA):</label>
+            <input type="number" id="horasTA" name="horasTA" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="horasPPP">Horas de prácticas preprofesionales (PPP):</label>
+            <input type="number" id="horasPPP" name="horasPPP" required>
+        </div>
+        <div class="form-group">
+            <label for="horasHVS">Horas de vinculación con la sociedad (HVS):</label>
+            <input type="number" id="horasHVS" name="horasHVS" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Distribución de horas por unidad temática:</label>
+        <div id="distribucionHorasContainer">
+            <div class="distribucion-horas-item">
+                <input type="text" name="unidadHoras[]" placeholder="Unidad" required>
+                <input type="number" name="horasUnidad[]" placeholder="Horas" required>
+                <button type="button" class="btn-remove" onclick="removeDistribucionHoras(this)">-</button>
+            </div>
+        </div>
+        <button type="button" class="btn-add" onclick="addDistribucionHoras()">+ Agregar distribución</button>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <?!= include('Styles'); ?>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Generador de Syllabus Académico</h1>
+
+        <div id="message"></div>
+
+        <form id="syllabusForm">
+            <?!= include('component_InformacionGeneral'); ?>
+            <?!= include('component_CargaHoraria'); ?>
+            <?!= include('component_ComponentesAcademicos'); ?>
+            <?!= include('component_UnidadesTematicas'); ?>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Generar Syllabus</button>
+                <button type="reset" class="btn-secondary">Limpiar Formulario</button>
+            </div>
+        </form>
+    </div>
+
+    <?!= include('component_Scripts'); ?>
+</body>
+
+</html>

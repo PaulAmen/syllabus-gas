@@ -1,0 +1,241 @@
+<script>
+    // Cargar carreras al iniciar
+    window.onload = function () {
+        google.script.run
+            .withSuccessHandler(function (carreras) {
+                const select = document.getElementById('carrera');
+                carreras.forEach(function (carrera) {
+                    const option = document.createElement('option');
+                    option.value = carrera;
+                    option.textContent = carrera;
+                    select.appendChild(option);
+                });
+            })
+            .getCarreras();
+
+        // Agregar evento para cargar datos cuando se ingrese el código o nombre
+        document.getElementById('codigo').addEventListener('change', function () {
+            const codigo = this.value;
+
+            if (codigo) {
+                // Limpiar mensajes anteriores
+                document.getElementById('message').innerHTML = '';
+
+                google.script.run
+                    .withSuccessHandler(function (result) {
+                        if (result.success) {
+                            const datos = result.data;
+                            // Llenar los campos del formulario
+                            Object.keys(datos).forEach(key => {
+                                const input = document.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    if (Array.isArray(datos[key])) {
+                                        // Manejar campos que son arrays (competencias, resultados)
+                                        const container = document.getElementById(`${key}Container`);
+                                        if (container) {
+                                            container.innerHTML = ''; // Limpiar contenedor
+                                            datos[key].forEach(valor => {
+                                                if (key === 'competencias') {
+                                                    addCompetencia(valor);
+                                                } else if (key.startsWith('resultados')) {
+                                                    const tipo = key.replace('resultados', '').toLowerCase();
+                                                    addResultado(`resultados${tipo}Container`, `resultados${tipo}[]`, valor);
+                                                }
+                                            });
+                                        }
+                                    } else if (input.type === 'textarea') {
+                                        input.value = datos[key] || '';
+                                    } else if (input.type === 'select-one') {
+                                        // Para selects, buscar la opción que coincida con el valor
+                                        const options = input.options;
+                                        let encontrado = false;
+                                        for (let i = 0; i < options.length; i++) {
+                                            if (options[i].value === datos[key]) {
+                                                input.selectedIndex = i;
+                                                encontrado = true;
+                                                break;
+                                            }
+                                        }
+                                        // Si no se encuentra el valor exacto, intentar con una coincidencia parcial
+                                        if (!encontrado) {
+                                            for (let i = 0; i < options.length; i++) {
+                                                if (options[i].text.toLowerCase().includes(datos[key]?.toLowerCase() || '')) {
+                                                    input.selectedIndex = i;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        input.value = datos[key] || '';
+                                    }
+                                }
+                            });
+                        } else {
+                            // Mostrar mensaje de error en la parte superior
+                            const messageDiv = document.getElementById('message');
+                            messageDiv.innerHTML = `
+                                <div class="alert alert-warning" style="margin-top: 20px;">
+                                    ${result.message}
+                                </div>
+                            `;
+                            // Desplazar la página al mensaje
+                            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    })
+                    .withFailureHandler(function (error) {
+                        // Mostrar mensaje de error en la parte superior
+                        const messageDiv = document.getElementById('message');
+                        messageDiv.innerHTML = `
+                            <div class="alert alert-danger" style="margin-top: 20px;">
+                                Error al cargar los datos: ${error}
+                            </div>
+                        `;
+                        // Desplazar la página al mensaje
+                        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    })
+                    .cargarDatosSyllabus(codigo);
+            }
+        });
+    };
+
+    // Funciones para manejar competencias
+    function addCompetencia() {
+        const container = document.getElementById('competenciasContainer');
+        const div = document.createElement('div');
+        div.className = 'competencia-item';
+        div.innerHTML = `
+        <input type="text" name="competencias[]" required>
+        <button type="button" class="btn-remove" onclick="removeCompetencia(this)">-</button>
+    `;
+        container.appendChild(div);
+    }
+
+    function removeCompetencia(button) {
+        button.parentElement.remove();
+    }
+
+    // Funciones para manejar resultados de aprendizaje
+    function addResultado(containerId, inputName, valor) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'resultado-item';
+        div.innerHTML = `
+        <input type="text" name="${inputName}" required value="${valor}">
+        <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
+    `;
+        container.appendChild(div);
+    }
+
+    function removeResultado(button) {
+        button.parentElement.remove();
+    }
+
+    // Funciones para manejar unidades temáticas
+    function addUnidadTematica() {
+        const container = document.getElementById('unidadesTematicasContainer');
+        const unidadCount = container.children.length + 1;
+
+        const div = document.createElement('div');
+        div.className = 'unidad-tematica';
+        div.innerHTML = `
+        <h3>Unidad Temática ${unidadCount}</h3>
+        <div class="form-group">
+            <label for="unidad${unidadCount}_nombre">Nombre de la unidad temática:</label>
+            <input type="text" id="unidad${unidadCount}_nombre" name="unidad${unidadCount}_nombre" required>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_subtemas">Subtemas/Contenidos específicos:</label>
+            <textarea id="unidad${unidadCount}_subtemas" name="unidad${unidadCount}_subtemas" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_resultados">Resultados de aprendizaje esperados:</label>
+            <textarea id="unidad${unidadCount}_resultados" name="unidad${unidadCount}_resultados" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_metodologias">Metodologías de enseñanza:</label>
+            <textarea id="unidad${unidadCount}_metodologias" name="unidad${unidadCount}_metodologias" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_recursos">Recursos de enseñanza:</label>
+            <textarea id="unidad${unidadCount}_recursos" name="unidad${unidadCount}_recursos" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_criterios">Criterios de evaluación:</label>
+            <textarea id="unidad${unidadCount}_criterios" name="unidad${unidadCount}_criterios" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_instrumentos">Instrumentos de evaluación:</label>
+            <textarea id="unidad${unidadCount}_instrumentos" name="unidad${unidadCount}_instrumentos" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_escenario">Escenario de aprendizaje:</label>
+            <textarea id="unidad${unidadCount}_escenario" name="unidad${unidadCount}_escenario" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_fuentes">Fuentes de consulta:</label>
+            <textarea id="unidad${unidadCount}_fuentes" name="unidad${unidadCount}_fuentes" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad${unidadCount}_fechas">Fechas por paralelo:</label>
+            <textarea id="unidad${unidadCount}_fechas" name="unidad${unidadCount}_fechas" rows="4" required></textarea>
+        </div>
+
+        <button type="button" class="btn-remove" onclick="removeUnidadTematica(this)">Eliminar Unidad</button>
+    `;
+        container.appendChild(div);
+    }
+
+    function removeUnidadTematica(button) {
+        button.parentElement.remove();
+    }
+
+    // Manejar el envío del formulario
+    document.getElementById('syllabusForm').onsubmit = function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = {};
+
+        // Convertir FormData a objeto
+        for (let [key, value] of formData.entries()) {
+            if (key.endsWith('[]')) {
+                const baseKey = key.slice(0, -2);
+                if (!data[baseKey]) {
+                    data[baseKey] = [];
+                }
+                data[baseKey].push(value);
+            } else {
+                data[key] = value;
+            }
+        }
+
+        // Enviar datos al servidor
+        google.script.run
+            .withSuccessHandler(function (result) {
+                document.getElementById('message').innerHTML = `
+                <div class="alert alert-success">
+                    Syllabus guardado exitosamente. 
+                    <a href="${result.url}" target="_blank">Ver documento generado</a>
+                </div>
+            `;
+                e.target.reset();
+            })
+            .withFailureHandler(function (error) {
+                document.getElementById('message').innerHTML = `
+                <div class="alert alert-danger">
+                    Error al guardar el syllabus: ${error.message}
+                </div>
+            `;
+            })
+            .guardarSyllabus(data.carrera, data);
+    };
+</script>

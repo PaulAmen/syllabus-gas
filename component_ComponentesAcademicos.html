@@ -1,0 +1,97 @@
+<!-- 3. Componentes Académicos -->
+<div class="section">
+    <h2>3. Componentes Académicos</h2>
+
+    <div class="form-group">
+        <label for="caracterizacion">Caracterización de la asignatura:</label>
+        <textarea id="caracterizacion" name="caracterizacion" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="aportePerfil">Aporte al perfil profesional:</label>
+        <textarea id="aportePerfil" name="aportePerfil" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="objetivos">Objetivos de la asignatura:</label>
+        <textarea id="objetivos" name="objetivos" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Competencias:</label>
+        <div id="competenciasContainer">
+            <div class="competencia-item">
+                <input type="text" name="competencias[]" required>
+                <button type="button" class="btn-remove" onclick="removeCompetencia(this)">-</button>
+            </div>
+        </div>
+        <button type="button" class="btn-add" onclick="addCompetencia()">+ Agregar competencia</button>
+    </div>
+
+    <div class="form-group">
+        <label>Resultados de aprendizaje:</label>
+        <div class="sub-section">
+            <h3>Actitudinales</h3>
+            <div id="resultadosActitudinalesContainer">
+                <div class="resultado-item">
+                    <input type="text" name="resultadosActitudinales[]" required>
+                    <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
+                </div>
+            </div>
+            <button type="button" class="btn-add"
+                onclick="addResultado('resultadosActitudinalesContainer', 'resultadosActitudinales[]')">+ Agregar
+                resultado actitudinal</button>
+        </div>
+
+        <div class="sub-section">
+            <h3>Cognitivos</h3>
+            <div id="resultadosCognitivosContainer">
+                <div class="resultado-item">
+                    <input type="text" name="resultadosCognitivos[]" required>
+                    <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
+                </div>
+            </div>
+            <button type="button" class="btn-add"
+                onclick="addResultado('resultadosCognitivosContainer', 'resultadosCognitivos[]')">+ Agregar resultado
+                cognitivo</button>
+        </div>
+
+        <div class="sub-section">
+            <h3>Procedimentales</h3>
+            <div id="resultadosProcedimentalesContainer">
+                <div class="resultado-item">
+                    <input type="text" name="resultadosProcedimentales[]" required>
+                    <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
+                </div>
+            </div>
+            <button type="button" class="btn-add"
+                onclick="addResultado('resultadosProcedimentalesContainer', 'resultadosProcedimentales[]')">+ Agregar
+                resultado procedimental</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="contenidos">Contenidos generales de la asignatura:</label>
+        <textarea id="contenidos" name="contenidos" rows="6" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="metodologia">Metodología:</label>
+        <textarea id="metodologia" name="metodologia" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="evaluacion">Procedimientos de evaluación:</label>
+        <textarea id="evaluacion" name="evaluacion" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="bibliografiaBasica">Bibliografía básica (mínimo 70% últimos 5 años):</label>
+        <textarea id="bibliografiaBasica" name="bibliografiaBasica" rows="6" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="bibliografiaComplementaria">Bibliografía complementaria:</label>
+        <textarea id="bibliografiaComplementaria" name="bibliografiaComplementaria" rows="6" required></textarea>
+    </div>
+</div>
