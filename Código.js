@@ -241,199 +241,112 @@ function generarDocumentoSyllabus(carrera, datos) {
 
 // Función para cargar los datos del sílabo
 function cargarDatosSyllabus(codigo) {
+   let logs = "";
    try {
+      logs += logDatos(
+         "Iniciando búsqueda de asignatura con código: " + codigo
+      );
+
       const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
       const sheet = ss.getSheetByName("ASIGNATURAS");
 
       if (!sheet) {
+         logs += logDatos("No se encontró la hoja ASIGNATURAS");
          return {
             success: false,
-            message: "No se encontró la hoja de asignaturas",
+            message: "No se encontró la hoja ASIGNATURAS",
+            logs: logs,
          };
       }
 
       const data = sheet.getDataRange().getValues();
       const headers = data[0];
+      logs += logDatos("Headers encontrados: " + headers.join(", "));
 
-      // Buscar la fila que coincide con el código o nombre
+      let datos = {};
+      let encontrado = false;
+
       for (let i = 1; i < data.length; i++) {
          const row = data[i];
-         if (
-            row[0] === codigo ||
-            row[1].toLowerCase() === codigo.toLowerCase()
-         ) {
-            const datos = {};
+         if (row[0] === codigo) {
+            logs += logDatos("Asignatura encontrada en la fila: " + (i + 1));
+            encontrado = true;
 
-            // Mapear los datos según los encabezados
-            headers.forEach((header, index) => {
-               // Mapeo directo de encabezados a nombres de campos
-               const mapeoCampos = {
-                  Código: "codigo",
-                  "Nombre de la asignatura": "nombreAsignatura",
-                  Prerrequisito: "prerrequisito",
-                  Correquisito: "correquisito",
-                  Facultad: "facultad",
-                  "UNIDAD": "unidadCurricular",
-                  "Campo de formación": "campoFormacion",
-                  Modalidad: "modalidad",
-                  "Periodo académico": "periodo",
-                  Nivel: "nivel",
-                  Paralelos: "paralelos",
-                  "Horario de clases": "horarioClases",
-                  "Horario de tutorías": "horarioTutorias",
-                  "Nombre del docente": "nombreDocente",
-                  "Perfil del docente": "perfilDocente",
-                  "Total horas": "totalHoras",
-                  "Horas de docencia": "horasDocencia",
-                  "Horas presencial": "horasPresencial",
-                  "Horas sincrónica": "horasSincronica",
-                  "Horas PAE": "horasPAE",
-                  "Horas TA": "horasTA",
-                  "Horas PPP": "horasPPP",
-                  "Horas HVS": "horasHVS",
-                  Caracterización: "caracterizacion",
-                  "Aporte al perfil": "aportePerfil",
-                  Objetivos: "objetivos",
-                  Competencias: "competencias",
-                  "Resultados actitudinales": "resultadosActitudinales",
-                  "Resultados cognitivos": "resultadosCognitivos",
-                  "Resultados procedimentales": "resultadosProcedimentales",
-                  "Contenidos generales": "contenidos",
-                  Metodología: "metodologia",
-                  Evaluación: "evaluacion",
-                  "Bibliografía básica": "bibliografiaBasica",
-                  "Bibliografía complementaria": "bibliografiaComplementaria",
-               };
+            for (let j = 0; j < headers.length; j++) {
+               const header = headers[j];
+               const value = row[j];
 
-               const key = mapeoCampos[header];
-
-               if (key) {
-                  // Manejar campos que son arrays (JSON)
+               try {
                   if (
-                     [
-                        "competencias",
-                        "resultadosActitudinales",
-                        "resultadosCognitivos",
-                        "resultadosProcedimentales",
-                     ].includes(key)
+                     header === "competencias" ||
+                     header === "resultados" ||
+                     header === "unidadesTematicas"
                   ) {
-                     try {
-                        datos[key] = JSON.parse(row[index]);
-                     } catch (e) {
-                        datos[key] = [];
-                     }
+                     datos[header] = JSON.parse(value || "[]");
+                     logs += logDatos(
+                        `Campo ${header} procesado como JSON: ${JSON.stringify(
+                           datos[header]
+                        )}`
+                     );
+                  } else if (
+                     header === "creditos" ||
+                     header === "horasPresenciales" ||
+                     header === "horasAutonomas"
+                  ) {
+                     datos[header] = parseFloat(value) || 0;
+                     logs += logDatos(
+                        `Campo ${header} procesado como número: ${datos[header]}`
+                     );
                   } else {
-                     // Convertir a número los campos de carga horaria
-                     if (
-                        [
-                           "totalHoras",
-                           "horasDocencia",
-                           "horasPresencial",
-                           "horasSincronica",
-                           "horasPAE",
-                           "horasTA",
-                           "horasPPP",
-                           "horasHVS",
-                        ].includes(key)
-                     ) {
-                        datos[key] = Number(row[index]) || 0;
-                     } else {
-                        // Manejar campos de tipo select
-                        if (key === "facultad") {
-                           datos[key] = "Ciencias Técnicas"; // Valor fijo ya que es la única opción
-                        } else if (key === "unidadCurricular") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (
-                              [
-                                 "Básica",
-                                 "Profesional",
-                                 "Complementaria",
-                              ].includes(valor)
-                           ) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
-                        } else if (key === "campoFormacion") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (
-                              [
-                                 "Ciencias Básicas",
-                                 "Ciencias de la Ingeniería",
-                                 "Ingeniería Aplicada",
-                                 "Ciencias Sociales y Humanísticas",
-                              ].includes(valor)
-                           ) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
-                        } else if (key === "modalidad") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (
-                              [
-                                 "Presencial",
-                                 "Semipresencial",
-                                 "Virtual",
-                              ].includes(valor)
-                           ) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
-                        } else if (key === "periodo") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (
-                              ["Primer Semestre", "Segundo Semestre"].includes(
-                                 valor
-                              )
-                           ) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
-                        } else if (key === "nivel") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (
-                              [
-                                 "Primero",
-                                 "Segundo",
-                                 "Tercero",
-                                 "Cuarto",
-                                 "Quinto",
-                                 "Sexto",
-                                 "Séptimo",
-                                 "Octavo",
-                                 "Noveno",
-                              ].includes(valor)
-                           ) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
-                        } else {
-                           // Asegurarse de que los campos de texto no sean undefined
-                           datos[key] = row[index] || "";
-                        }
-                     }
+                     datos[header] = value || "";
+                     logs += logDatos(
+                        `Campo ${header} procesado como texto: ${datos[header]}`
+                     );
                   }
+               } catch (error) {
+                  logs += logDatos(
+                     `Error procesando campo ${header}: ${error.message}`
+                  );
+                  datos[header] = "";
                }
-            });
-
-            return { success: true, data: datos };
+            }
+            break;
          }
       }
 
+      if (!encontrado) {
+         logs += logDatos(
+            "No se encontró la asignatura con el código proporcionado"
+         );
+         return {
+            success: false,
+            message: "No se encontró la asignatura con el código proporcionado",
+            logs: logs,
+         };
+      }
+
+      logs += logDatos("Datos cargados exitosamente");
+      return { success: true, data: datos, logs: logs };
+   } catch (error) {
+      logs += logDatos("Error general: " + error.message);
       return {
          success: false,
-         message: "No se encontró la asignatura especificada",
+         message: "Error al cargar los datos: " + error.message,
+         logs: logs,
       };
-   } catch (error) {
-      return { success: false, message: error.toString() };
    }
+}
+
+// Función para logging
+function logDatos(mensaje) {
+   const timestamp = new Date().toLocaleString();
+   let logMessage = `[${timestamp}] ${mensaje}\n`;
+
+   // Retornar el mensaje de log para mostrarlo en el cliente
+   return logMessage;
+}
+
+// Función para obtener los logs
+function getLogs() {
+   return "Logs iniciados...";
 }
