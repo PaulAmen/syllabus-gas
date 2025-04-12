@@ -1,4 +1,5 @@
 <script>
+
     // Cargar carreras al iniciar
     window.onload = function () {
         google.script.run
@@ -13,7 +14,7 @@
             })
             .getCarreras();
 
-        // Agregar evento para cargar datos cuando se ingrese el código o nombre
+        // Agregar evento para cargar datos cuando se ingrese el código de asignatura
         document.getElementById('codigo').addEventListener('change', function () {
             const codigo = this.value;
 
@@ -21,122 +22,28 @@
                 // Limpiar mensajes anteriores
                 document.getElementById('message').innerHTML = '';
 
-                // Mostrar logs en la consola
+                // Validar si el código es válido y cargar los datos
                 google.script.run
                     .withSuccessHandler(function (result) {
                         console.log('Resultado recibido:', result); // Log del resultado completo
 
                         if (result.success) {
-                            // Mostrar mensaje de éxito
-                            const messageDiv = document.getElementById('message');
-                            messageDiv.innerHTML = `
-                                <div class="alert alert-success" style="margin-top: 20px;">
-                                    Datos cargados correctamente
-                                </div>
-                            `;
-
-                            // Mostrar logs en la consola
-                            console.log('=== LOGS DE CARGA DE DATOS ===');
-                            console.log(result.logs);
-                            console.log('=============================');
-
-                            // Llenar los campos del formulario con los datos recibidos
-                            const data = result.data;
-                            console.log('Datos a cargar:', data); // Log de los datos recibidos
-
-                            if (data) {
-                                // Campos básicos
-                                const campos = {
-                                    'nombre': 'Nombre de la asignatura',
-                                    'carrera': 'Carrera',
-                                    'nivel': 'Nivel',
-                                    'creditos': 'Totalh',
-                                    'horasPresenciales': 'HorasP',
-                                    'horasAutonomas': 'HorasS',
-                                    'prerrequisitos': 'Prerrequisito',
-                                    'correquisitos': 'Correquisito',
-                                    'descripcion': 'Caracterización',
-                                    'objetivos': 'Objetivos',
-                                    'metodologia': 'Metodología',
-                                    'recursos': 'Didácticos',
-                                    'evaluacion': 'Evaluación',
-                                    'bibliografia': 'Básica'
-                                };
-
-                                // Llenar campos básicos
-                                Object.entries(campos).forEach(([id, campo]) => {
-                                    const elemento = document.getElementById(id);
-                                    if (elemento) {
-                                        elemento.value = data[campo] || '';
-                                        console.log(`Campo ${id} cargado con valor:`, data[campo]); // Log de cada campo cargado
-                                    } else {
-                                        console.warn(`Elemento con ID ${id} no encontrado`); // Log si no se encuentra el elemento
-                                    }
-                                });
-
-                                // Competencias
-                                const competenciasContainer = document.getElementById('competenciasContainer');
-                                if (competenciasContainer) {
-                                    competenciasContainer.innerHTML = ''; // Limpiar competencias existentes
-                                    if (data.Competencias) {
-                                        const competencias = data.Competencias.split('\n').filter(c => c.trim());
-                                        competencias.forEach(competencia => {
-                                            addCompetencia();
-                                            const inputs = competenciasContainer.getElementsByTagName('input');
-                                            inputs[inputs.length - 1].value = competencia.trim();
-                                            console.log('Competencia cargada:', competencia.trim()); // Log de cada competencia
-                                        });
-                                    }
-                                }
-
-                                // Resultados de aprendizaje
-                                const resultadosContainer = document.getElementById('resultadosContainer');
-                                if (resultadosContainer) {
-                                    resultadosContainer.innerHTML = ''; // Limpiar resultados existentes
-
-                                    // Combinar resultados actitudinales, cognitivos y procedimentales
-                                    const resultados = [];
-                                    if (data.Actitudinales) resultados.push(...data.Actitudinales.split('\n').filter(r => r.trim()));
-                                    if (data.Cognitivos) resultados.push(...data.Cognitivos.split('\n').filter(r => r.trim()));
-                                    if (data.Procedimentales) resultados.push(...data.Procedimentales.split('\n').filter(r => r.trim()));
-
-                                    resultados.forEach(resultado => {
-                                        addResultado('resultadosContainer', 'resultados[]', resultado.trim());
-                                        console.log('Resultado cargado:', resultado.trim()); // Log de cada resultado
-                                    });
-                                }
-
-                                // Unidades temáticas
-                                const unidadesContainer = document.getElementById('unidadesTematicasContainer');
-                                if (unidadesContainer) {
-                                    unidadesContainer.innerHTML = ''; // Limpiar unidades existentes
-
-                                    // Procesar unidades temáticas
-                                    for (let i = 1; i <= 4; i++) {
-                                        const unidadKey = `UT${i}`;
-                                        if (data[unidadKey]) {
-                                            addUnidadTematica();
-                                            const unidadDiv = unidadesContainer.lastElementChild;
-
-                                            // Llenar campos de la unidad
-                                            const camposUnidad = {
-                                                'nombre': `unidad${i}_nombre`,
-                                                'subtemas': `unidad${i}_subtemas`,
-                                                'resultados': `unidad${i}_resultados`,
-                                                'metodologias': `unidad${i}_metodologias`,
-                                                'recursos': `unidad${i}_recursos`,
-                                                'criterios': `unidad${i}_criterios`,
-                                                'instrumentos': `unidad${i}_instrumentos`,
-                                                'escenario': `unidad${i}_escenario`,
-                                                'fuentes': `unidad${i}_fuentes`,
-                                                'fechas': `unidad${i}_fechas`
-                                            };
-
-                                            Object.entries(camposUnidad).forEach(([campo, id]) => {
-                                                const elemento = unidadDiv.querySelector(`#${id}`);
-                                                if (elemento) {
-                                                    elemento.value = data[unidadKey] || '';
-                                                    console.log(`Campo ${id} de unidad ${i} cargado con valor:`, data[unidadKey]); // Log de cada campo de unidad
+                            const datos = result.data;
+                            // Llenar los campos del formulario con los datos obtenidos
+                            Object.keys(datos).forEach(key => {
+                                const input = document.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    if (Array.isArray(datos[key])) {
+                                        // Manejar campos que son arrays (competencias, resultados)
+                                        const container = document.getElementById(`${key}Container`);
+                                        if (container) {
+                                            container.innerHTML = ''; // Limpiar contenedor
+                                            datos[key].forEach(valor => {
+                                                if (key === 'competencias') {
+                                                    addCompetencia(valor);
+                                                } else if (key.startsWith('resultados')) {
+                                                    const tipo = key.replace('resultados', '').toLowerCase();
+                                                    addResultado(`resultados${tipo}Container`, `resultados${tipo}[]`, valor);
                                                 }
                                             });
                                         }
@@ -146,40 +53,40 @@
                                 console.warn('No se recibieron datos para cargar'); // Log si no hay datos
                             }
                         } else {
-                            // Mostrar mensaje de error
+                            // Mostrar mensaje de error si el código no es válido
                             const messageDiv = document.getElementById('message');
                             messageDiv.innerHTML = `
                                 <div class="alert alert-warning" style="margin-top: 20px;">
                                     ${result.message}
                                 </div>
                             `;
-                            console.error('Error:', result.message);
+                            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
                     })
                     .withFailureHandler(function (error) {
-                        // Mostrar mensaje de error
+                        // Mostrar mensaje de error si ocurre un problema con la carga de datos
                         const messageDiv = document.getElementById('message');
                         messageDiv.innerHTML = `
                             <div class="alert alert-danger" style="margin-top: 20px;">
                                 Error al cargar los datos: ${error}
                             </div>
                         `;
-                        console.error('Error al cargar los datos:', error);
+                        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     })
-                    .cargarDatosSyllabus(codigo);
+                    .cargarDatosSyllabus(codigo); // Llamar al servidor para obtener los datos
             }
         });
     };
 
     // Funciones para manejar competencias
-    function addCompetencia() {
+    function addCompetencia(valor) {
         const container = document.getElementById('competenciasContainer');
         const div = document.createElement('div');
         div.className = 'competencia-item';
         div.innerHTML = `
-        <input type="text" name="competencias[]" required>
-        <button type="button" class="btn-remove" onclick="removeCompetencia(this)">-</button>
-    `;
+            <input type="text" name="competencias[]" value="${valor}" required>
+            <button type="button" class="btn-remove" onclick="removeCompetencia(this)">-</button>
+        `;
         container.appendChild(div);
     }
 
@@ -193,9 +100,9 @@
         const div = document.createElement('div');
         div.className = 'resultado-item';
         div.innerHTML = `
-        <input type="text" name="${inputName}" required value="${valor}">
-        <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
-    `;
+            <input type="text" name="${inputName}" value="${valor}" required>
+            <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
+        `;
         container.appendChild(div);
     }
 
@@ -211,59 +118,59 @@
         const div = document.createElement('div');
         div.className = 'unidad-tematica';
         div.innerHTML = `
-        <h3>Unidad Temática ${unidadCount}</h3>
-        <div class="form-group">
-            <label for="unidad${unidadCount}_nombre">Nombre de la unidad temática:</label>
-            <input type="text" id="unidad${unidadCount}_nombre" name="unidad${unidadCount}_nombre" required>
-        </div>
+            <h3>Unidad Temática ${unidadCount}</h3>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_nombre">Nombre de la unidad temática:</label>
+                <input type="text" id="unidad${unidadCount}_nombre" name="unidad${unidadCount}_nombre" required>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_subtemas">Subtemas/Contenidos específicos:</label>
-            <textarea id="unidad${unidadCount}_subtemas" name="unidad${unidadCount}_subtemas" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_subtemas">Subtemas/Contenidos específicos:</label>
+                <textarea id="unidad${unidadCount}_subtemas" name="unidad${unidadCount}_subtemas" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_resultados">Resultados de aprendizaje esperados:</label>
-            <textarea id="unidad${unidadCount}_resultados" name="unidad${unidadCount}_resultados" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_resultados">Resultados de aprendizaje esperados:</label>
+                <textarea id="unidad${unidadCount}_resultados" name="unidad${unidadCount}_resultados" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_metodologias">Metodologías de enseñanza:</label>
-            <textarea id="unidad${unidadCount}_metodologias" name="unidad${unidadCount}_metodologias" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_metodologias">Metodologías de enseñanza:</label>
+                <textarea id="unidad${unidadCount}_metodologias" name="unidad${unidadCount}_metodologias" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_recursos">Recursos de enseñanza:</label>
-            <textarea id="unidad${unidadCount}_recursos" name="unidad${unidadCount}_recursos" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_recursos">Recursos de enseñanza:</label>
+                <textarea id="unidad${unidadCount}_recursos" name="unidad${unidadCount}_recursos" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_criterios">Criterios de evaluación:</label>
-            <textarea id="unidad${unidadCount}_criterios" name="unidad${unidadCount}_criterios" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_criterios">Criterios de evaluación:</label>
+                <textarea id="unidad${unidadCount}_criterios" name="unidad${unidadCount}_criterios" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_instrumentos">Instrumentos de evaluación:</label>
-            <textarea id="unidad${unidadCount}_instrumentos" name="unidad${unidadCount}_instrumentos" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_instrumentos">Instrumentos de evaluación:</label>
+                <textarea id="unidad${unidadCount}_instrumentos" name="unidad${unidadCount}_instrumentos" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_escenario">Escenario de aprendizaje:</label>
-            <textarea id="unidad${unidadCount}_escenario" name="unidad${unidadCount}_escenario" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_escenario">Escenario de aprendizaje:</label>
+                <textarea id="unidad${unidadCount}_escenario" name="unidad${unidadCount}_escenario" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_fuentes">Fuentes de consulta:</label>
-            <textarea id="unidad${unidadCount}_fuentes" name="unidad${unidadCount}_fuentes" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_fuentes">Fuentes de consulta:</label>
+                <textarea id="unidad${unidadCount}_fuentes" name="unidad${unidadCount}_fuentes" rows="4" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="unidad${unidadCount}_fechas">Fechas por paralelo:</label>
-            <textarea id="unidad${unidadCount}_fechas" name="unidad${unidadCount}_fechas" rows="4" required></textarea>
-        </div>
+            <div class="form-group">
+                <label for="unidad${unidadCount}_fechas">Fechas por paralelo:</label>
+                <textarea id="unidad${unidadCount}_fechas" name="unidad${unidadCount}_fechas" rows="4" required></textarea>
+            </div>
 
-        <button type="button" class="btn-remove" onclick="removeUnidadTematica(this)">Eliminar Unidad</button>
-    `;
+            <button type="button" class="btn-remove" onclick="removeUnidadTematica(this)">Eliminar Unidad</button>
+        `;
         container.appendChild(div);
     }
 
@@ -311,4 +218,6 @@
             })
             .guardarSyllabus(data.carrera, data);
     };
+
+    
 </script>

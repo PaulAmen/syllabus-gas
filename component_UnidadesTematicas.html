@@ -1,113 +1,237 @@
-<!-- 4. Unidades Temáticas -->
-<div class="section">
-    <h2>4. Planificación por Unidad Temática</h2>
-    <div id="unidadesTematicasContainer">
-        <div class="unidad-tematica">
-            <h3>Unidad Temática 1</h3>
-            <div class="form-group">
-                <label for="unidad1_nombre">Nombre de la unidad temática:</label>
-                <input type="text" id="unidad1_nombre" name="unidad1_nombre" required>
-            </div>
-
-            <div class="form-group">
-                <label>Subtemas/Contenidos específicos:</label>
-                <div id="unidad1_subtemasContainer">
-                    <div class="subtema-item">
-                        <input type="text" name="unidad1_subtemas[]" placeholder="Subtema" required>
-                        <button type="button" class="btn-remove" onclick="removeSubtema(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add" onclick="addSubtema('unidad1_subtemasContainer')">+ Agregar
-                    subtema</button>
-            </div>
-
-            <div class="form-group">
-                <label>Resultados de aprendizaje esperados:</label>
-                <div id="unidad1_resultadosContainer">
-                    <div class="resultado-item">
-                        <input type="text" name="unidad1_resultados[]" required>
-                        <button type="button" class="btn-remove" onclick="removeResultado(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add"
-                    onclick="addResultado('unidad1_resultadosContainer', 'unidad1_resultados[]')">+ Agregar
-                    resultado</button>
-            </div>
-
-            <div class="form-group">
-                <label>Metodologías de enseñanza:</label>
-                <div id="unidad1_metodologiasContainer">
-                    <div class="metodologia-item">
-                        <input type="text" name="unidad1_metodologias[]" required>
-                        <button type="button" class="btn-remove" onclick="removeMetodologia(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add"
-                    onclick="addMetodologia('unidad1_metodologiasContainer', 'unidad1_metodologias[]')">+ Agregar
-                    metodología</button>
-            </div>
-
-            <div class="form-group">
-                <label>Recursos didácticos:</label>
-                <div id="unidad1_recursosContainer">
-                    <div class="recurso-item">
-                        <input type="text" name="unidad1_recursos[]" required>
-                        <button type="button" class="btn-remove" onclick="removeRecurso(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add"
-                    onclick="addRecurso('unidad1_recursosContainer', 'unidad1_recursos[]')">+ Agregar recurso</button>
-            </div>
-
-            <div class="form-group">
-                <label>Criterios de evaluación:</label>
-                <div id="unidad1_criteriosContainer">
-                    <div class="criterio-item">
-                        <input type="text" name="unidad1_criterios[]" required>
-                        <button type="button" class="btn-remove" onclick="removeCriterio(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add"
-                    onclick="addCriterio('unidad1_criteriosContainer', 'unidad1_criterios[]')">+ Agregar
-                    criterio</button>
-            </div>
-
-            <div class="form-group">
-                <label>Escenario de aprendizaje:</label>
-                <select name="unidad1_escenario" required>
-                    <option value="">Seleccione un escenario</option>
-                    <option value="Áulico">Áulico</option>
-                    <option value="Laboratorio">Laboratorio</option>
-                    <option value="Campo">Campo</option>
-                    <option value="Virtual">Virtual</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Bibliografía / Fuentes de consulta:</label>
-                <div id="unidad1_fuentesContainer">
-                    <div class="fuente-item">
-                        <input type="text" name="unidad1_fuentes[]" required>
-                        <button type="button" class="btn-remove" onclick="removeFuente(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add"
-                    onclick="addFuente('unidad1_fuentesContainer', 'unidad1_fuentes[]')">+ Agregar fuente</button>
-            </div>
-
-            <div class="form-group">
-                <label>Fechas por paralelo:</label>
-                <div id="unidad1_fechasContainer">
-                    <div class="fecha-item">
-                        <input type="text" name="unidad1_fechas[]" placeholder="Paralelo" required>
-                        <input type="text" name="unidad1_fechas[]" placeholder="Fecha" required>
-                        <button type="button" class="btn-remove" onclick="removeFecha(this)">-</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add" onclick="addFecha('unidad1_fechasContainer')">+ Agregar
-                    fecha</button>
-            </div>
-        </div>
+//UNIDAD 1
+<label for="ut1">Contenidos de las unidades:</label>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="unidadna">Unidad:</label>
+      <textarea id="unidadna" name="unidadna" rows="2" class="textarea"></textarea>
     </div>
-    <button type="button" class="btn-add" onclick="addUnidadTematica()">+ Agregar Unidad Temática</button>
-</div>
+    <div class="form-group">
+      <label for="unidadga">Titulo Unidad:</label>
+      <textarea id="unidadga" name="unidadga" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="subtemana">Numeros Subtematicos:</label>
+      <textarea id="subtemana" name="subtemana" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="subtemaa">Titulos Subtematicos:</label>
+      <textarea id="subtemaa" name="subtemaa" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="raprendizajea">Escenario de aprendizaje:</label>
+      <textarea id="raprendizajea" name="raprendizajea" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="metodologiaa">Metodologia:</label>
+      <textarea id="metodologiaa" name="metodologiaa" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="didacticosa">Recursos Didacticos:</label>
+      <textarea id="didacticosa" name="didacticosa" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="criteriosa">Criterios de Aprendizaje:</label>
+      <textarea id="criteriosa" name="criteriosa" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+<div class="form-row">
+    <div class="form-group">
+      <label for="aprendizajea">Metodos de Aprendizaje:</label>
+      <textarea id="aprendizajea" name="aprendizajea" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="biblioa">Recursos Bibliograficos:</label>
+      <textarea id="biblioa" name="biblioa" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="fechaa">Horarios de clase Fecha/Paralelo:</label>
+      <textarea id="fechaa" name="fechaa" rows="2" class="textarea"></textarea>
+    </div>
+
+
+
+    //UNIDAD 2
+  <div class="form-row">
+    <div class="form-group">
+      <label for="unidadnb">Unidad:</label>
+      <textarea id="unidadnb" name="unidadnb" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="unidadgb">Titulo Unidad:</label>
+      <textarea id="unidadgb" name="unidadgb" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="subtemanb">Numeros Subtematicos:</label>
+      <textarea id="subtemanb" name="subtemanb" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="subtemab">Titulos Subtematicos:</label>
+      <textarea id="subtemab" name="subtemab" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="raprendizajeb">Escenario de aprendizaje:</label>
+      <textarea id="raprendizajeb" name="raprendizajeb" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="metodologiab">Metodologia:</label>
+      <textarea id="metodologiab" name="metodologiab" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="didacticosb">Recursos Didacticos:</label>
+      <textarea id="didacticosb" name="didacticosb" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="criteriosb">Criterios de Aprendizaje:</label>
+      <textarea id="criteriosb" name="criteriosb" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+<div class="form-row">
+    <div class="form-group">
+      <label for="aprendizajeb">Metodos de Aprendizaje:</label>
+      <textarea id="aprendizajeb" name="aprendizajeb" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="bibliob">Recursos Bibliograficos:</label>
+      <textarea id="bibliob" name="bibliob" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="fechab">Horarios de clase Fecha/Paralelo:</label>
+      <textarea id="fechab" name="fechab" rows="2" class="textarea"></textarea>
+    </div>
+
+
+
+    //UNIDAD 3
+  <div class="form-row">
+    <div class="form-group">
+      <label for="unidadnc">Unidad:</label>
+      <textarea id="unidadnc" name="unidadnc" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="unidadgc">Titulo Unidad:</label>
+      <textarea id="unidadgc" name="unidadgc" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="subtemanc">Numeros Subtematicos:</label>
+      <textarea id="subtemanc" name="subtemanc" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="subtemac">Titulos Subtematicos:</label>
+      <textarea id="subtemac" name="subtemac" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="raprendizajec">Escenario de aprendizaje:</label>
+      <textarea id="raprendizajec" name="raprendizajec" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="metodologiac">Metodologia:</label>
+      <textarea id="metodologiac" name="metodologiac" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="didacticosc">Recursos Didacticos:</label>
+      <textarea id="didacticosc" name="didacticosc" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="criteriosc">Criterios de Aprendizaje:</label>
+      <textarea id="criteriosc" name="criteriosc" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+<div class="form-row">
+    <div class="form-group">
+      <label for="aprendizajec">Metodos de Aprendizaje:</label>
+      <textarea id="aprendizajec" name="aprendizajec" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="biblioc">Recursos Bibliograficos:</label>
+      <textarea id="biblioc" name="biblioc" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="fechac">Horarios de clase Fecha/Paralelo:</label>
+      <textarea id="fechac" name="fechac" rows="2" class="textarea"></textarea>
+    </div>
+
+
+    //UNIDAD 4
+  <div class="form-row">
+    <div class="form-group">
+      <label for="unidadnd">Unidad:</label>
+      <textarea id="unidadnd" name="unidadnd" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="unidadgd">Titulo Unidad:</label>
+      <textarea id="unidadgd" name="unidadgd" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="subtemand">Numeros Subtematicos:</label>
+      <textarea id="subtemand" name="subtemand" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="subtemad">Titulos Subtematicos:</label>
+      <textarea id="subtemad" name="subtemad" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="raprendizajed">Escenario de aprendizaje:</label>
+      <textarea id="raprendizajed" name="raprendizajed" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="metodologiad">Metodologia:</label>
+      <textarea id="metodologiad" name="metodologiad" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="didacticosd">Recursos Didacticos:</label>
+      <textarea id="didacticosd" name="didacticosd" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="criteriosd">Criterios de Aprendizaje:</label>
+      <textarea id="criteriosd" name="criteriosd" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+
+<div class="form-row">
+    <div class="form-group">
+      <label for="aprendizajed">Metodos de Aprendizaje:</label>
+      <textarea id="aprendizajed" name="aprendizajed" rows="2" class="textarea"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="bibliod">Recursos Bibliograficos:</label>
+      <textarea id="bibliod" name="bibliod" rows="2" class="textarea"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="fechad">Horarios de clase Fecha/Paralelo:</label>
+      <textarea id="fechad" name="fechad" rows="2" class="textarea"></textarea>
+    </div>
