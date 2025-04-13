@@ -25,8 +25,6 @@
                 // Validar si el código es válido y cargar los datos
                 google.script.run
                     .withSuccessHandler(function (result) {
-                        console.log('Resultado recibido:', result); // Log del resultado completo
-
                         if (result.success) {
                             const datos = result.data;
                             // Llenar los campos del formulario con los datos obtenidos
@@ -47,11 +45,33 @@
                                                 }
                                             });
                                         }
+                                    } else if (input.type === 'textarea') {
+                                        input.value = datos[key] || '';
+                                    } else if (input.type === 'select-one') {
+                                        // Para selects, buscar la opción que coincida con el valor
+                                        const options = input.options;
+                                        let encontrado = false;
+                                        for (let i = 0; i < options.length; i++) {
+                                            if (options[i].value === datos[key]) {
+                                                input.selectedIndex = i;
+                                                encontrado = true;
+                                                break;
+                                            }
+                                        }
+                                        // Si no se encuentra el valor exacto, intentar con una coincidencia parcial
+                                        if (!encontrado) {
+                                            for (let i = 0; i < options.length; i++) {
+                                                if (options[i].text.toLowerCase().includes(datos[key]?.toLowerCase() || '')) {
+                                                    input.selectedIndex = i;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        input.value = datos[key] || '';
                                     }
                                 }
-                            } else {
-                                console.warn('No se recibieron datos para cargar'); // Log si no hay datos
-                            }
+                            });
                         } else {
                             // Mostrar mensaje de error si el código no es válido
                             const messageDiv = document.getElementById('message');
