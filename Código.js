@@ -267,19 +267,18 @@ function generarDocumentoSyllabus(carrera, datos) {
     body.replaceText("{{HVS}}", datos.horasHVS);
     body.replaceText("{{UNIDADN}}", datos.unidadn);
 
-    // Componentes Académicos
+        // Componentes Académicos
     body.replaceText("{{CARACTERIZACION}}", datos.caracterizacion);
     body.replaceText("{{APORTE_PERFIL}}", datos.aportePerfil);
     body.replaceText("{{OBJETIVOS}}", datos.objetivos);
-
     // Competencias
-    const competenciasText = datos.competencias
-      .map((comp, index) => `${index + 1}. ${comp}`)
-      .join("\n");
-    body.replaceText("{{COMPETENCIAS}}", competenciasText);
+      if (datos.competencias && Array.isArray(datos.competencias)){
+        const competenciasText = datos.competencias.map((comp, index) => `${index + 1}. ${comp}`).join("\\n");
+        body.replaceText("{{COMPETENCIAS}}", competenciasText);
+    }
 
     // Resultados de aprendizaje
-
+    body.replaceText("{{ACTITUDINALES}}", datos.actitudinales);
     body.replaceText("{{ACTITUDINALES}}", datos.actitudinales);
     body.replaceText("{{COGNITIVOS}}", datos.cognitivos);
     body.replaceText("{{PROCEDIMENTALES}}", datos.procedimentales);
@@ -290,68 +289,67 @@ function generarDocumentoSyllabus(carrera, datos) {
     body.replaceText("{{BASICA}}", datos.basica);
     body.replaceText("{{COMPLEMENTARIA}}", datos.complementaria);
 
-    // Unidades temáticas
-    body.replaceText("{{HVS}}", datos.horasHVS)
+        // Unidades temáticas
+        body.replaceText("{{HVS}}", datos.horasHVS)
+
+        //REEMPLAZAR EN EL DOCUMENTO UNIDAD 1
+        body.replaceText("{{UNIDADNA}}", datos.unidadna);
+        body.replaceText("{{UNIDADGA}}", datos.unidadga);
+        body.replaceText("{{SUBTEMANA}}", datos.subtemana);
+        body.replaceText("{{SUBTEMAA}}", datos.subtemaa);
+        body.replaceText("{{RAPRENDIZAJEA}}", datos.raprendizajea);
+        body.replaceText("{{METODOLOGIAA}}", datos.metodologiaa);
+        body.replaceText("{{DIDACTICOSA}}", datos.didacticosa);
+        body.replaceText("{{CRITERIOSA}}", datos.criteriosa);
+        body.replaceText("{{APRENDIZAJEA}}", datos.aprendizajea);
+        body.replaceText("{{BIBLIOA}}", datos.biblioa);
+        body.replaceText("{{FECHAA}}", datos.fechaa);
+
+        //REEMPLAZAR EN EL DOCUMENTO UNIDAD 2
+        body.replaceText("{{UNIDADNB}}", datos.unidadnb);
+        body.replaceText("{{UNIDADGB}}", datos.unidadgb);
+        body.replaceText("{{SUBTEMANB}}", datos.subtemanb);
+        body.replaceText("{{SUBTEMAB}}", datos.subtemab);
+        body.replaceText("{{RAPRENDIZAJEB}}", datos.raprendizajeb);
+        body.replaceText("{{METODOLOGIAB}}", datos.metodologiab);
+        body.replaceText("{{DIDACTICOSB}}", datos.didacticosb);
+        body.replaceText("{{CRITERIOSB}}", datos.criteriosb);
+        body.replaceText("{{APRENDIZAJEB}}", datos.aprendizajeb);
+        body.replaceText("{{BIBLIOGRAFIAB}}", datos.bibliob);
+        body.replaceText("{{FECHAB}}", datos.fechab);
 
 
-    //REEMPLAZAR EN EL DOCUMENTO UNIDAD 1
-    cuerpo.replaceText("{{UNIDADNA}}", datos.unidadna);
-    cuerpo.replaceText("{{UNIDADGA}}", datos.unidadga);
-    cuerpo.replaceText("{{SUBTEMANA}}", datos.subtemana);
-    cuerpo.replaceText("{{SUBTEMAA}}", datos.subtemaa);
-    cuerpo.replaceText("{{RAPRENDIZAJEA}}", datos.raprendizajea);
-    cuerpo.replaceText("{{METODOLOGIAA}}", datos.metologiaa);
-    cuerpo.replaceText("{{DIDACTICOSA}}", datos.didacticosa);
-    cuerpo.replaceText("{{CRITERIOSA}}", datos.crieriosa);
-    cuerpo.replaceText("{{APRENDIZAJEA}}", datos.aprendizajea);
-    cuerpo.replaceText("{{BIBLIOA}}", datos.biblioa);
-    cuerpo.replaceText("{{FECHAA}}", datos.fechaa);
-
-    //REEMPLAZAR EN EL DOCUMENTO UNIDAD 2
-    cuerpo.replaceText("{{UNIDADNB}}", datos.unidadnb);
-    cuerpo.replaceText("{{UNIDADGB}}", datos.unidadgb);
-    cuerpo.replaceText("{{SUBTEMANB}}", datos.subtemanb);
-    cuerpo.replaceText("{{SUBTEMAB}}", datos.subtemab);
-    cuerpo.replaceText("{{RAPRENDIZAJEB}}", datos.raprendizajeb);
-    cuerpo.replaceText("{{METODOLOGIAB}}", datos.metologiab);
-    cuerpo.replaceText("{{DIDACTICOSB}}", datos.didacticosb);
-    cuerpo.replaceText("{{CRITERIOSB}}", datos.crieriosb);
-    cuerpo.replaceText("{{APRENDIZAJEB}}", datos.aprendizajeb);
-    cuerpo.replaceText("{{BIBLIOGRAFIAB}}", datos.bibliob);
-    cuerpo.replaceText("{{FECHAB}}", datos.fechab);
+        //REEMPLAZAR EN EL DOCUMENTO UNIDAD 3
+        body.replaceText("{{UNIDADNC}}", datos.unidadnc);
+        body.replaceText("{{UNIDADGC}}", datos.unidadgc);
+        body.replaceText("{{SUBTEMANC}}", datos.subtemanc);
+        body.replaceText("{{SUBTEMAC}}", datos.subtemac);
+        body.replaceText("{{RAPRENDIZAJEC}}", datos.raprendizajec);
+        body.replaceText("{{METODOLOGIAC}}", datos.metologiac);
+        body.replaceText("{{DIDACTICOSC}}", datos.didacticosc);
+        body.replaceText("{{CRITERIOSC}}", datos.criteriosc);
+        body.replaceText("{{APRENDIZAJEC}}", datos.aprendizajec);
+        body.replaceText("{{BIBLIOGRAFIAC}}", datos.biblioc);
+        body.replaceText("{{FECHAC}}", datos.fechac);
 
 
-    //REEMPLAZAR EN EL DOCUMENTO UNIDAD 3
-    cuerpo.replaceText("{{UNIDADNC}}", datos.unidadnc);
-    cuerpo.replaceText("{{UNIDADGC}}", datos.unidadgc);
-    cuerpo.replaceText("{{SUBTEMANC}}", datos.subtemanc);
-    cuerpo.replaceText("{{SUBTEMAC}}", datos.subtemac);
-    cuerpo.replaceText("{{RAPRENDIZAJEC}}", datos.raprendizajec);
-    cuerpo.replaceText("{{METODOLOGIAC}}", datos.metologiac);
-    cuerpo.replaceText("{{DIDACTICOSC}}", datos.didacticosc);
-    cuerpo.replaceText("{{CRITERIOSC}}", datos.crieriosc);
-    cuerpo.replaceText("{{APRENDIZAJEC}}", datos.aprendizajec);
-    cuerpo.replaceText("{{BIBLIOGRAFIAC}}", datos.biblioc);
-    cuerpo.replaceText("{{FECHAC}}", datos.fechac);
-
-
-    //REEMPLAZAR EN EL DOCUMENTO UNIDAD 4
-    cuerpo.replaceText("{{UNIDADND}}", datos.unidadnd);
-    cuerpo.replaceText("{{UNIDADGD}}", datos.unidadgd);
-    cuerpo.replaceText("{{SUBTEMAND}}", datos.subtemand);
-    cuerpo.replaceText("{{SUBTEMAD}}", datos.subtemad);
-    cuerpo.replaceText("{{RAPRENDIZAJED}}", datos.raprendizajed);
-    cuerpo.replaceText("{{METODOLOGIAD}}", datos.metologiad);
-    cuerpo.replaceText("{{DIDACTICOSD}}", datos.didacticosd);
-    cuerpo.replaceText("{{CRITERIOSD}}", datos.crieriosd);
-    cuerpo.replaceText("{{APRENDIZAJED}}", datos.aprendizajed);
-    cuerpo.replaceText("{{BIBLIOGRAFIAD}}", datos.bibliod);
-    cuerpo.replaceText("{{FECHAD}}", datos.fechad);
+        //REEMPLAZAR EN EL DOCUMENTO UNIDAD 4
+        body.replaceText("{{UNIDADND}}", datos.unidadnd);
+        body.replaceText("{{UNIDADGD}}", datos.unidadgd);
+        body.replaceText("{{SUBTEMAND}}", datos.subtemand);
+        body.replaceText("{{SUBTEMAD}}", datos.subtemad);
+        body.replaceText("{{RAPRENDIZAJED}}", datos.raprendizajed);
+        body.replaceText("{{METODOLOGIAD}}", datos.metologiad);
+        body.replaceText("{{DIDACTICOSD}}", datos.didacticosd);
+        body.replaceText("{{CRITERIOSD}}", datos.criteriosd);
+        body.replaceText("{{APRENDIZAJED}}", datos.aprendizajed);
+        body.replaceText("{{BIBLIOGRAFIAD}}", datos.bibliod);
+        body.replaceText("{{FECHAD}}", datos.fechad);
     // Guardar y obtener URL del documento
     doc.saveAndClose();
-    const url = doc.getUrl();
+    const fileId = doc.getId();
 
-    return { success: true, url: url };
+    return { success: true, fileId: fileId };
   } catch (error) {
     return { success: false, message: error.toString() };
   }
