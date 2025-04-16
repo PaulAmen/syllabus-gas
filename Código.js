@@ -242,6 +242,24 @@ function generarDocumentoSyllabus(carrera, datos) {
 
     const template = DocumentApp.openById(TEMPLATE_DOC_ID);
     const folder = DriveApp.getFolderById(FOLDER_ID);
+
+    if (!template) {
+      throw new Error("No se pudo acceder al documento plantilla.");
+    }
+    if (!folder) {
+      throw new Error("No se pudo acceder a la carpeta de destino en Drive.");
+    }
+
+    
+    const doc = template.makeCopy(datos.nombreAsignatura);
+
+    if (!doc) {
+      throw new Error("No se pudo crear una copia del documento plantilla.");
+    }
+
+    const file = DriveApp.getFileById(doc.getId());
+    folder.addFile(file);
+
     const doc = template.makeCopy(datos.nombreAsignatura, folder);
 
     // Reemplazar marcadores en el documento
@@ -357,9 +375,19 @@ function generarDocumentoSyllabus(carrera, datos) {
         body.replaceText("{{BIBLIOGRAFIAD}}", datos.bibliod);
         body.replaceText("{{FECHAD}}", datos.fechad);
     // Guardar y obtener URL del documento
-    doc.saveAndClose();
+    try {
+      doc.saveAndClose();
+    } catch (error) {
+      throw new Error("Error al guardar el documento: " + error.toString());
+    }
+    try {
+      folder.addFile(file);
+    } catch (error) {
+      throw new Error("No se pudo agregar el archivo a la carpeta: " + error.toString());
+    }
+    
     const fileId = doc.getId();
-
+   
     return { success: true, fileId: fileId };
   } catch (error) {
     return { success: false, message: error.toString() };
