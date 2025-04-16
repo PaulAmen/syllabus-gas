@@ -1,6 +1,8 @@
 // Configuración de la aplicación
 const SPREADSHEET_ID = "1byVwunHRmWbgf0XOeOkHQNW6eiTZ-n4NO_61pb0mYcc"; // ID de la hoja de cálculo principal
 const TEMPLATE_DOC_ID = ""; // ID del documento plantilla del sílabo
+const FOLDER_ID = "1kqGZPLQCxnod_zk2GqPhk9y6d06jOYWo";
+
 
 // Función para mostrar la interfaz de usuario
 function doGet() {
@@ -232,12 +234,18 @@ function guardarSyllabus(carrera, datos) {
 // Función para generar el documento del sílabo
 function generarDocumentoSyllabus(carrera, datos) {
   try {
+    let unidad = "";
+    let modalidad = "";
+    let periodo = "";
+    let nivel = "";
+    let paralelos = "";
+
     const template = DocumentApp.openById(TEMPLATE_DOC_ID);
-    const doc = template.makeCopy();
+    const folder = DriveApp.getFolderById(FOLDER_ID);
+    const doc = template.makeCopy(datos.nombreAsignatura, folder);
 
     // Reemplazar marcadores en el documento
     const body = doc.getBody();
-
     // Información General
     body.replaceText("{{CODIGO}}", datos.codigo);
     body.replaceText("{{NOMBRE_ASIGNATURA}}", datos.nombreAsignatura);
@@ -272,9 +280,9 @@ function generarDocumentoSyllabus(carrera, datos) {
     body.replaceText("{{APORTE_PERFIL}}", datos.aportePerfil);
     body.replaceText("{{OBJETIVOS}}", datos.objetivos);
     // Competencias
-      if (datos.competencias && Array.isArray(datos.competencias)){
-        const competenciasText = datos.competencias.map((comp, index) => `${index + 1}. ${comp}`).join("\\n");
-        body.replaceText("{{COMPETENCIAS}}", competenciasText);
+    if (datos.competencias && Array.isArray(datos.competencias)) {
+      const competenciasText = datos.competencias.map((comp, index) => `${index + 1}. ${comp}`).join("\\n");
+      body.replaceText("{{COMPETENCIAS}}", competenciasText);
     }
 
     // Resultados de aprendizaje
@@ -283,12 +291,15 @@ function generarDocumentoSyllabus(carrera, datos) {
     body.replaceText("{{COGNITIVOS}}", datos.cognitivos);
     body.replaceText("{{PROCEDIMENTALES}}", datos.procedimentales);
 
-    body.replaceText("{{UT1}}", datos.ut1, datos.ut2, datos.ut3, datos.ut4);
+    body.replaceText("{{UT1}}", datos.ut1);
+    body.replaceText("{{UT2}}", datos.ut2);
+    body.replaceText("{{UT3}}", datos.ut3);
+    body.replaceText("{{UT4}}", datos.ut4);
     body.replaceText("{{METODOLOGIA}}", datos.metodologia);
     body.replaceText("{{EVALUACION}}", datos.evaluacion);
     body.replaceText("{{BASICA}}", datos.basica);
     body.replaceText("{{COMPLEMENTARIA}}", datos.complementaria);
-
+    
         // Unidades temáticas
         body.replaceText("{{HVS}}", datos.horasHVS)
 
@@ -369,7 +380,7 @@ function cargarDatosSyllabus(codigo) {
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
 
-
+    
 
     // Buscar la fila que coincide con el código o nombre
     for (let i = 1; i < data.length; i++) {
