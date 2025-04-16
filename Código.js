@@ -258,10 +258,9 @@ function generarDocumentoSyllabus(carrera, datos) {
     }
 
     const file = DriveApp.getFileById(doc.getId());
-    folder.addFile(file);
+    
 
-    const doc = template.makeCopy(datos.nombreAsignatura, folder);
-
+    
     // Reemplazar marcadores en el documento
     const body = doc.getBody();
     // Información General
@@ -381,13 +380,13 @@ function generarDocumentoSyllabus(carrera, datos) {
       throw new Error("Error al guardar el documento: " + error.toString());
     }
     try {
-      folder.addFile(file);
+        folder.addFile(file);
     } catch (error) {
-      throw new Error("No se pudo agregar el archivo a la carpeta: " + error.toString());
+        throw new Error("No se pudo agregar el archivo a la carpeta: " + error.toString());
     }
     
     const fileId = doc.getId();
-   
+
     return { success: true, fileId: fileId };
   } catch (error) {
     return { success: false, message: error.toString() };
