@@ -27,12 +27,18 @@ function getCarreras() {
 // Función para guardar la información del sílabo
 function guardarSyllabus(carrera, datos) {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);    
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = ss.getSheetByName(carrera);
 
-    if (!sheet) return { success: false, message: 'No existe la hoja con ese nombre.'};
-    // Agregar encabezados
-    sheet.appendRow([
+    if (!sheet) {
+      sheet = ss.insertSheet(carrera);
+      // Agregar encabezados
+      sheet.appendRow([
+        
+        //Add headers only if the sheet is created.
+
+        //Agregar encabezados
+
         "Código",
         "Nombre de la asignatura",
         "Prerrequisito",
@@ -126,7 +132,8 @@ function guardarSyllabus(carrera, datos) {
         "BiblioD",
         "FechaD",
       ]);
-
+    }
+    
 
     // Preparar datos para la hoja de cálculo
     const rowData = [
