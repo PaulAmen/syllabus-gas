@@ -28,11 +28,10 @@ function getCarreras() {
 function guardarSyllabus(carrera, datos) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = ss.getSheetByName(carrera);
+    let sheet = ss.insertSheet(carrera);
 
-    if (!sheet) {
-      sheet = ss.insertSheet(carrera);
-      // Agregar encabezados
+    
+    // Agregar encabezados
       sheet.appendRow([
         "Código",
         "Nombre de la asignatura",
@@ -127,7 +126,7 @@ function guardarSyllabus(carrera, datos) {
         "BiblioD",
         "FechaD",
       ]);
-    }
+
 
     // Preparar datos para la hoja de cálculo
     const rowData = [
