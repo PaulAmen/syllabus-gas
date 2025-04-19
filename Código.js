@@ -27,12 +27,12 @@ function getCarreras() {
 // Función para guardar la información del sílabo
 function guardarSyllabus(carrera, datos) {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = ss.insertSheet(carrera);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);    
+    let sheet = ss.getSheetByName(carrera);
 
-    
+    if (!sheet) return { success: false, message: 'No existe la hoja con ese nombre.'};
     // Agregar encabezados
-      sheet.appendRow([
+    sheet.appendRow([
         "Código",
         "Nombre de la asignatura",
         "Prerrequisito",
