@@ -86,6 +86,171 @@ function generarDocumentoSyllabus(carrera, datos) {
         body.replaceText("{{BASICA}}", datos.basica || "");
         body.replaceText("{{COMPLEMENTARIA}}", datos.complementaria || "");
 
+
+        // Función para dividir un campo en un array usando el separador |
+        function dividirCampo(valor) {
+            return valor ? valor.split('|').filter(item => item.trim().length > 0) : [];
+        }
+
+        // Procesar todos los campos para las unidades
+        
+        // Unidad 1
+        const subtemasNA = dividirCampo(datos.subtemana);
+        const subtemasA = dividirCampo(datos.subtemaa);
+        const metodologiaA = dividirCampo(datos.metodologiaa);
+        const recursosA = dividirCampo(datos.didacticosa);
+        const escenariosA = dividirCampo(datos.aprendizajea);
+        const bibliografiaA = dividirCampo(datos.biblioa);
+        const fechaA = dividirCampo(datos.fechaa);
+        
+        // Unidad 2
+        const subtemasNB = dividirCampo(datos.subtemanb);
+        const subtemasB = dividirCampo(datos.subtemab);
+        const metodologiaB = dividirCampo(datos.metodologiab);
+        const recursosB = dividirCampo(datos.didacticosb);
+        const escenariosB = dividirCampo(datos.aprendizajeb);
+        const bibliografiaB = dividirCampo(datos.bibliob);
+        const fechaB = dividirCampo(datos.fechab);
+        
+        // Unidad 3
+        const subtemasNC = dividirCampo(datos.subtemanc);
+        const subtemasC = dividirCampo(datos.subtemac);
+        const metodologiaC = dividirCampo(datos.metodologiac);
+        const recursosC = dividirCampo(datos.didacticosc);
+        const escenariosC = dividirCampo(datos.aprendizajec);
+        const bibliografiaC = dividirCampo(datos.biblioc);
+        const fechaC = dividirCampo(datos.fechac);
+        
+        // Unidad 4
+        const subtemasND = dividirCampo(datos.subtemand);
+        const subtemasD = dividirCampo(datos.subtemad);
+        const metodologiaD = dividirCampo(datos.metodologiad);
+        const recursosD = dividirCampo(datos.didacticosd);
+        const escenariosD = dividirCampo(datos.aprendizajed);
+        const bibliografiaD = dividirCampo(datos.bibliod);
+        const fechaD = dividirCampo(datos.fechad);
+        
+        // Determinar el número máximo de filas para cada unidad
+        const maxFilas = 5; // Máximo 5 filas por unidad
+        
+        // Reemplazar campos para Unidad 1
+        for (let i = 1; i <= maxFilas; i++) {
+            // Subtema número
+            body.replaceText(`{{SUBTEMAN1_${i}}}`, (i <= subtemasNA.length) ? subtemasNA[i-1].trim() : "");
+            
+            // Contenido del subtema
+            body.replaceText(`{{SUBTEMA1_${i}}}`, (i <= subtemasA.length) ? subtemasA[i-1].trim() : "");
+            
+            // Metodología
+            body.replaceText(`{{METODOLOGIA1_${i}}}`, (i <= metodologiaA.length) ? metodologiaA[i-1].trim() : "");
+            
+            // Recursos didácticos
+            body.replaceText(`{{RECURSOS1_${i}}}`, (i <= recursosA.length) ? recursosA[i-1].trim() : "");
+            
+            // Escenario de aprendizaje
+            body.replaceText(`{{ESCENARIO1_${i}}}`, (i <= escenariosA.length) ? escenariosA[i-1].trim() : "");
+            
+            // Bibliografía
+            body.replaceText(`{{BIBLIOGRAFIA1_${i}}}`, (i <= bibliografiaA.length) ? bibliografiaA[i-1].trim() : "");
+            
+            // Fecha/paralelo
+            body.replaceText(`{{FECHA1_${i}}}`, (i <= fechaA.length) ? fechaA[i-1].trim() : "");
+        }
+        
+        // Reemplazar campos para Unidad 2
+        for (let i = 1; i <= maxFilas; i++) {
+            // Subtema número
+            body.replaceText(`{{SUBTEMAN2_${i}}}`, (i <= subtemasNB.length) ? subtemasNB[i-1].trim() : "");
+            
+            // Contenido del subtema
+            body.replaceText(`{{SUBTEMA2_${i}}}`, (i <= subtemasB.length) ? subtemasB[i-1].trim() : "");
+            
+            // Metodología
+            body.replaceText(`{{METODOLOGIA2_${i}}}`, (i <= metodologiaB.length) ? metodologiaB[i-1].trim() : "");
+            
+            // Recursos didácticos
+            body.replaceText(`{{RECURSOS2_${i}}}`, (i <= recursosB.length) ? recursosB[i-1].trim() : "");
+            
+            // Escenario de aprendizaje
+            body.replaceText(`{{ESCENARIO2_${i}}}`, (i <= escenariosB.length) ? escenariosB[i-1].trim() : "");
+            
+            // Bibliografía
+            body.replaceText(`{{BIBLIOGRAFIA2_${i}}}`, (i <= bibliografiaB.length) ? bibliografiaB[i-1].trim() : "");
+            
+            // Fecha/paralelo
+            body.replaceText(`{{FECHA2_${i}}}`, (i <= fechaB.length) ? fechaB[i-1].trim() : "");
+        }
+        
+        // Reemplazar campos para Unidad 3
+        for (let i = 1; i <= maxFilas; i++) {
+            // Subtema número
+            body.replaceText(`{{SUBTEMAN3_${i}}}`, (i <= subtemasNC.length) ? subtemasNC[i-1].trim() : "");
+            
+            // Contenido del subtema
+            body.replaceText(`{{SUBTEMA3_${i}}}`, (i <= subtemasC.length) ? subtemasC[i-1].trim() : "");
+            
+            // Metodología
+            body.replaceText(`{{METODOLOGIA3_${i}}}`, (i <= metodologiaC.length) ? metodologiaC[i-1].trim() : "");
+            
+            // Recursos didácticos
+            body.replaceText(`{{RECURSOS3_${i}}}`, (i <= recursosC.length) ? recursosC[i-1].trim() : "");
+            
+            // Escenario de aprendizaje
+            body.replaceText(`{{ESCENARIO3_${i}}}`, (i <= escenariosC.length) ? escenariosC[i-1].trim() : "");
+            
+            // Bibliografía
+            body.replaceText(`{{BIBLIOGRAFIA3_${i}}}`, (i <= bibliografiaC.length) ? bibliografiaC[i-1].trim() : "");
+            
+            // Fecha/paralelo
+            body.replaceText(`{{FECHA3_${i}}}`, (i <= fechaC.length) ? fechaC[i-1].trim() : "");
+        }
+        
+        // Reemplazar campos para Unidad 4
+        for (let i = 1; i <= maxFilas; i++) {
+            // Subtema número
+            body.replaceText(`{{SUBTEMAN4_${i}}}`, (i <= subtemasND.length) ? subtemasND[i-1].trim() : "");
+            
+            // Contenido del subtema
+            body.replaceText(`{{SUBTEMA4_${i}}}`, (i <= subtemasD.length) ? subtemasD[i-1].trim() : "");
+            
+            // Metodología
+            body.replaceText(`{{METODOLOGIA4_${i}}}`, (i <= metodologiaD.length) ? metodologiaD[i-1].trim() : "");
+            
+            // Recursos didácticos
+            body.replaceText(`{{RECURSOS4_${i}}}`, (i <= recursosD.length) ? recursosD[i-1].trim() : "");
+            
+            // Escenario de aprendizaje
+            body.replaceText(`{{ESCENARIO4_${i}}}`, (i <= escenariosD.length) ? escenariosD[i-1].trim() : "");
+            
+            // Bibliografía
+            body.replaceText(`{{BIBLIOGRAFIA4_${i}}}`, (i <= bibliografiaD.length) ? bibliografiaD[i-1].trim() : "");
+            
+            // Fecha/paralelo
+            body.replaceText(`{{FECHA4_${i}}}`, (i <= fechaD.length) ? fechaD[i-1].trim() : "");
+        }
+        
+        // Resto de reemplazos en el documento
+        body.replaceText("{{UNIDADNA}}", datos.unidadna || "");
+        body.replaceText("{{RAPRENDIZAJEA}}", datos.raprendizajea || "");
+        body.replaceText("{{CRITERIOSA}}", datos.criteriosa || "");
+
+        body.replaceText("{{UNIDADNB}}", datos.unidadnb || "");
+        body.replaceText("{{RAPRENDIZAJEB}}", datos.raprendizajeb || "");
+        body.replaceText("{{CRITERIOSB}}", datos.criteriosb || "");
+
+        body.replaceText("{{UNIDADNC}}", datos.unidadnc || "");
+        body.replaceText("{{RAPRENDIZAJEC}}", datos.raprendizajec || "");
+        body.replaceText("{{CRITERIOSC}}", datos.criteriosc || "");
+
+        body.replaceText("{{UNIDADND}}", datos.unidadnd || "");
+        body.replaceText("{{RAPRENDIZAJED}}", datos.raprendizajed || "");
+        body.replaceText("{{CRITERIOSD}}", datos.criteriosd || "");
+
+        // Limpiar cualquier placeholder no reemplazado (opcional)
+        body.replaceText("{{[^}]*}}", "");
+
+
+
         // Unidades temáticas - corrected duplicate
         // body.replaceText("{{HVS}}", datos.horasHVS || ""); // Already replaced above
 

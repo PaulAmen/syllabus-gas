@@ -238,6 +238,113 @@
             })
             .generarDocumentoSyllabus(data.carrera, data);
     };
+// Añade esto al final de tu script existente, justo antes de la última llave de cierre
 
+
+
+
+// Versión con mensaje visual mejorado para actualización automática
+document.addEventListener('DOMContentLoaded', function() {
+    // Buscar el formulario principal
+    var formulario = document.getElementById('syllabusForm');
+    if (!formulario) {
+        console.log('No se encontró el formulario');
+        return;
+    }
     
+    // Añadir evento change al formulario para detectar cambios en cualquier campo
+    formulario.addEventListener('change', function(e) {
+        var campo = e.target;
+        
+        // Ignorar si no es un campo de entrada o si es parte de un array
+        if (!campo.name || campo.name.endsWith('[]') || 
+            (campo.tagName !== 'INPUT' && campo.tagName !== 'TEXTAREA' && campo.tagName !== 'SELECT')) {
+            return;
+        }
+        
+        // Obtener valores necesarios
+        var carreraEl = document.getElementById('carrera');
+        var codigoEl = document.getElementById('codigo');
+        
+        var carrera = carreraEl ? carreraEl.value : '';
+        var codigo = codigoEl ? codigoEl.value : '';
+        
+        if (!codigo) {
+            console.log('Se requiere un código de asignatura para guardar');
+            return;
+        }
+        
+        // Marcar visualmente que se está guardando
+        var originalBg = campo.style.backgroundColor;
+        campo.style.backgroundColor = '#f0f8ff';
+        
+        // Crear y mostrar el mensaje de guardado
+        var msgContainer = document.createElement('div');
+        msgContainer.className = 'save-message';
+        msgContainer.style.fontSize = '12px';
+        msgContainer.style.color = '#4285f4';
+        msgContainer.style.marginTop = '5px';
+        msgContainer.style.position = 'relative';
+        msgContainer.innerHTML = 'Guardando...';
+        
+        // Insertar el mensaje después del campo
+        if (campo.parentNode) {
+            // Si el campo está dentro de un label, insertar después del label
+            var container = campo.parentNode;
+            if (container.tagName === 'LABEL') {
+                container = container.parentNode;
+            }
+            
+            // Insertar después del campo o su contenedor
+            container.appendChild(msgContainer);
+        }
+        
+        // Llamar a la función del servidor
+        google.script.run
+            .withSuccessHandler(function(resultado) {
+                // Restaurar estilo original
+                campo.style.backgroundColor = originalBg;
+                
+                if (resultado && resultado.success) {
+                    // Actualizar mensaje a "Guardado"
+                    msgContainer.innerHTML = '&#10004; Guardado';
+                    msgContainer.style.color = '#34a853';
+                    console.log('Campo guardado:', campo.name);
+                } else {
+                    // Actualizar mensaje a error
+                    msgContainer.innerHTML = '&#10060; Error: ' + 
+                        (resultado ? resultado.message : 'Sin respuesta');
+                    msgContainer.style.color = '#ea4335';
+                    console.warn('Error al guardar:', resultado ? resultado.message : 'Sin respuesta');
+                }
+                
+                // Remover el mensaje después de un tiempo
+                setTimeout(function() {
+                    if (msgContainer.parentNode) {
+                        msgContainer.parentNode.removeChild(msgContainer);
+                    }
+                }, 3000); // Desaparece después de 3 segundos
+            })
+            .withFailureHandler(function(error) {
+                // Restaurar estilo en caso de error
+                campo.style.backgroundColor = originalBg;
+                
+                // Actualizar mensaje a error
+                msgContainer.innerHTML = '&#10060; Error: ' + error;
+                msgContainer.style.color = '#ea4335';
+                console.error('Error:', error);
+                
+                // Remover el mensaje después de un tiempo
+                setTimeout(function() {
+                    if (msgContainer.parentNode) {
+                        msgContainer.parentNode.removeChild(msgContainer);
+                    }
+                }, 3000);
+            })
+            .actualizarCampo(carrera, codigo, campo.name, campo.value);
+    });
+    
+    console.log('Sistema de actualización automática inicializado');
+});
+
 </script>
