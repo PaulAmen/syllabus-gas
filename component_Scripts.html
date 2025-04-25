@@ -1,6 +1,5 @@
 <script>
-
-    // Cargar carreras al iniciar
+  // Cargar carreras al iniciar
     window.onload = function () {
         google.script.run
             .withSuccessHandler(function (carreras) {
@@ -346,5 +345,509 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Sistema de actualización automática inicializado');
 });
+
+
+// --- INICIO LÓGICA DEL PLANIFICADOR (DRAG & DROP - POR DÍA) ---
+
+// Datos del calendario académico PI 2025 (con fechas para cálculo)
+// IMPORTANTE: Las fechas deben estar en un formato que JS pueda parsear, como YYYY-MM-DD o MM/DD/YYYY
+// Usaremos MM/DD/YYYY que parece funcionar con new Date() en la mayoría de navegadores.
+const calendarioAcademico = [
+    // Ajusta las fechas a un formato consistente si es necesario (MM/DD/YYYY)
+    { semana: 1, inicio: "05/12/2025", fin: "05/17/2025", tipo: "Clases" },
+    { semana: 2, inicio: "05/19/2025", fin: "05/22/2025", tipo: "Clases", nota: "Feriado 23/05" },
+    { semana: 3, inicio: "05/26/2025", fin: "05/31/2025", tipo: "Clases" },
+    { semana: 4, inicio: "06/02/2025", fin: "06/07/2025", tipo: "Clases" },
+    { semana: 5, inicio: "06/09/2025", fin: "06/14/2025", tipo: "Clases" },
+    { semana: 6, inicio: "06/16/2025", fin: "06/21/2025", tipo: "Clases" },
+    { semana: 7, inicio: "06/23/2025", fin: "06/28/2025", tipo: "Clases", nota: "Feriado 25/06" },
+    { semana: 8, inicio: "06/30/2025", fin: "07/05/2025", tipo: "Examen I Parcial" },
+    { semana: 9, inicio: "07/07/2025", fin: "07/12/2025", tipo: "Clases" },
+    { semana: 10, inicio: "07/14/2025", fin: "07/19/2025", tipo: "Clases" },
+    { semana: 11, inicio: "07/21/2025", fin: "07/26/2025", tipo: "Clases" },
+    { semana: 12, inicio: "07/28/2025", fin: "08/02/2025", tipo: "Clases" },
+    { semana: 13, inicio: "08/04/2025", fin: "08/09/2025", tipo: "Clases", nota: "Feriado 11/08" }, // Asumiendo que el 11 es feriado basado en que la semana 14 empieza el 12
+    { semana: 14, inicio: "08/12/2025", fin: "08/16/2025", tipo: "Clases" },
+    { semana: 15, inicio: "08/18/2025", fin: "08/23/2025", tipo: "Clases" },
+    { semana: 16, inicio: "09/01/2025", fin: "09/06/2025", tipo: "Examen II Parcial" },
+];
+
+// Días festivos específicos (formato MM/DD/YYYY) - Extraídos de las notas o calendario
+const feriadosEspecificos = ["05/23/2025", "06/25/2025", "08/11/2025"]; // Añade otros si existen
+
+// Elementos del DOM (igual que antes)
+const planificadorGrid = document.getElementById('planificadorGrid');
+const planificadorHeaderSemanas = document.getElementById('planificadorHeaderSemanas');
+const planificadorBodySemanas = document.getElementById('planificadorBodySemanas');
+const planificadorParaleloSelect = document.getElementById('planificadorParalelo');
+const planificacionDataInput = document.getElementById('planificacionData');
+const planificadorMensaje = document.getElementById('planificadorMensaje');
+const planificadorGridContainer = document.getElementById('planificadorGridContainer');
+const sourceList = document.getElementById('sourceList');
+const sourcePanelMensaje = document.getElementById('sourcePanelMensaje');
+
+// Estado de la planificación: { paralelo: { "S{semana}-{dia}": [{id:..., texto:...}], ... } }
+// Ejemplo key: "S1-Mon", "S1-Tue", "S8-Fri"
+let planificacionActual = {};
+const diasSemana = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]; // 0=Dom, 1=Lun...
+
+// --- Helper Functions ---
+function parseDate(dateString) { // Formato MM/DD/YYYY
+    const parts = dateString.split('/');
+    // Nota: Los meses en JS Date son 0-indexados (0=Ene, 1=Feb...)
+    return new Date(parts[2], parts[0] - 1, parts[1]);
+}
+
+function formatDate(date) { // Devuelve MM/DD/YYYY
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const y = date.getFullYear();
+    return `${m < 10 ? '0' + m : m}/${d < 10 ? '0' + d : d}/${y}`;
+}
+
+function getDayAbbreviation(date) {
+    return diasSemana[date.getDay()];
+}
+// --- Fin Helper Functions ---
+
+
+// Función para inicializar el planificador (MODIFICADA PARA DÍAS)
+function inicializarPlanificadorDragDrop() {
+    // 1. Llenar selector de paralelos (MODIFICADO para leer múltiples paralelos)
+    const paralelosInput = document.getElementById('paralelos'); // Ahora es un input text
+    planificadorParaleloSelect.innerHTML = '<option value="">Seleccione un paralelo</option>'; // Limpiar selector del planificador
+
+    if (paralelosInput && paralelosInput.value) {
+        const paralelosDisponibles = paralelosInput.value.split(',') // Separar por coma
+                                         .map(p => p.trim()) // Quitar espacios extra
+                                         .filter(p => p); // Quitar vacíos
+
+        if (paralelosDisponibles.length > 0) {
+            paralelosDisponibles.forEach(paralelo => {
+                const option = document.createElement('option');
+                option.value = paralelo;
+                option.textContent = `Paralelo ${paralelo}`;
+                planificadorParaleloSelect.appendChild(option);
+            });
+            // Intentar restaurar la selección previa si existe en los datos cargados
+            // (Esta parte requiere que 'planificacionActual' ya esté cargado,
+            // podríamos mover la carga de datos antes de este punto o
+            // seleccionar el primer paralelo por defecto)
+             planificadorParaleloSelect.selectedIndex = 0; // Seleccionar el placeholder o el primero si se restaura
+        } else {
+            // Mostrar mensaje si el input tiene valor pero no se pudieron parsear paralelos
+            planificadorMensaje.textContent = "Ingrese los paralelos separados por coma en Información General.";
+            planificadorMensaje.style.display = 'block';
+            planificadorGrid.style.display = 'none';
+            sourceList.innerHTML = '';
+            sourcePanelMensaje.style.display = 'block';
+            return; // Salir si no hay paralelos válidos
+        }
+
+    } else { // Si el input de paralelos está vacío
+        planificadorMensaje.textContent = "Ingrese los paralelos en la sección de Información General.";
+        planificadorMensaje.style.display = 'block';
+        planificadorGrid.style.display = 'none';
+        sourceList.innerHTML = '';
+        sourcePanelMensaje.style.display = 'block';
+        return; // Salir si no hay paralelos definidos
+    }
+    sourcePanelMensaje.style.display = 'none'; // Ocultar mensaje si hay paralelos
+
+    // 2. Crear cabecera de semanas y celdas de DÍA
+    planificadorHeaderSemanas.innerHTML = ''; // Limpiar cabecera
+    let dropZoneRow = planificadorBodySemanas.querySelector('tr');
+    if (!dropZoneRow) {
+        dropZoneRow = document.createElement('tr');
+        planificadorBodySemanas.appendChild(dropZoneRow);
+    }
+    dropZoneRow.innerHTML = ''; // Limpiar fila de drop zones (días)
+
+    calendarioAcademico.forEach(sem => {
+        // Cabecera de la semana
+        const th = document.createElement('th');
+        const inicioSemana = parseDate(sem.inicio);
+        const finSemana = parseDate(sem.fin);
+        const numDias = Math.round((finSemana - inicioSemana) / (1000 * 60 * 60 * 24)) + 1;
+
+        th.title = `${sem.tipo} (${sem.inicio} - ${sem.fin}) ${sem.nota ? sem.nota : ''}`;
+        th.innerHTML = `Sem ${sem.semana}<br><span style="font-size:0.8em; font-weight:normal;">${sem.inicio}-${sem.fin.substring(0,5)}</span>`;
+        th.colSpan = numDias; // La cabecera ocupa el número de días de esa semana
+        if(sem.tipo.includes('Examen')) {
+            th.style.backgroundColor = '#fff3cd';
+        }
+        planificadorHeaderSemanas.appendChild(th);
+
+        // Crear celdas de DÍA para esta semana
+        let currentDate = new Date(inicioSemana);
+        while (currentDate <= finSemana) {
+            const td = document.createElement('td');
+            const diaAbbr = getDayAbbreviation(currentDate);
+            const fechaStr = formatDate(currentDate);
+            const esFeriado = feriadosEspecificos.includes(fechaStr);
+
+            td.classList.add('day-cell');
+            const dayKey = `S${sem.semana}-${diaAbbr}`; // Clave única para el día
+            td.dataset.dayKey = dayKey; // Guardar clave completa
+            td.dataset.semana = sem.semana; // Guardar semana
+            td.dataset.dia = diaAbbr; // Guardar día abreviado
+            td.dataset.fecha = fechaStr; // Guardar fecha
+
+            // Añadir nombre del día
+            const dayHeader = document.createElement('span');
+            dayHeader.classList.add('day-cell-header');
+            dayHeader.textContent = diaAbbr;
+            td.appendChild(dayHeader);
+
+            if (esFeriado) {
+                td.classList.add('holiday');
+                td.title = "Día festivo";
+            } else {
+                // Añadir event listeners solo si no es feriado
+                td.classList.add('drop-zone');
+                td.addEventListener('dragover', handleDragOver);
+                td.addEventListener('dragenter', handleDragEnter);
+                td.addEventListener('dragleave', handleDragLeave);
+                td.addEventListener('drop', handleDrop);
+            }
+            dropZoneRow.appendChild(td);
+
+            // Avanzar al siguiente día
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+    });
+
+    // 3. Cargar datos guardados
+    try {
+        planificacionActual = JSON.parse(planificacionDataInput.value || '{}');
+    } catch (e) { /* ... manejo de error igual que antes ... */ }
+
+    // 4. Llenar lista de contenidos arrastrables (sin cambios)
+    llenarSourceList();
+
+    // 5. Añadir event listener al selector de paralelo (sin cambios)
+    planificadorParaleloSelect.addEventListener('change', () => {
+        actualizarDropZones(); // Actualizar vista de días
+        mostrarGridPlanificador();
+    });
+
+    // 6. Observar cambios en unidades (sin cambios)
+    const camposUnidades = document.querySelectorAll('#component_UnidadesTematicas textarea');
+    camposUnidades.forEach(textarea => {
+        textarea.addEventListener('input', debounce(llenarSourceList, 500));
+    });
+
+    console.log('Planificador Drag&Drop por DÍA inicializado');
+    actualizarDropZones(); // Llenar días con datos iniciales
+    mostrarGridPlanificador();
+}
+
+// --- Resto de funciones adaptadas para DÍAS ---
+
+// Función debounce (igual que antes)
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Función para llenar la lista de contenidos arrastrables
+function llenarSourceList() {
+    sourceList.innerHTML = ''; // Limpiar lista
+    const unidades = [
+        { id: 'u1', titulo: document.getElementById('unidadga')?.value, subtemasNum: document.getElementById('subtemana')?.value, subtemasTit: document.getElementById('subtemaa')?.value },
+        { id: 'u2', titulo: document.getElementById('unidadgb')?.value, subtemasNum: document.getElementById('subtemanb')?.value, subtemasTit: document.getElementById('subtemab')?.value },
+        { id: 'u3', titulo: document.getElementById('unidadgc')?.value, subtemasNum: document.getElementById('subtemanc')?.value, subtemasTit: document.getElementById('subtemac')?.value },
+        { id: 'u4', titulo: document.getElementById('unidadgd')?.value, subtemasNum: document.getElementById('subtemand')?.value, subtemasTit: document.getElementById('subtemad')?.value },
+    ];
+
+    let hasContent = false;
+    unidades.forEach((unidad, index) => {
+         // Procesar subtemas (asumiendo separados por '|' o nueva línea)
+         const separador = /[\n|]+/;
+         const numeros = (unidad.subtemasNum || '').split(separador).map(s => s.trim()).filter(Boolean);
+         const titulos = (unidad.subtemasTit || '').split(separador).map(s => s.trim()).filter(Boolean);
+         const maxSubtemas = Math.max(numeros.length, titulos.length);
+
+         if (maxSubtemas > 0) {
+             // Añadir título de unidad si hay subtemas
+             const unidadTitle = document.createElement('div');
+             unidadTitle.style.fontWeight = 'bold';
+             unidadTitle.style.marginTop = '10px';
+             unidadTitle.textContent = `Unidad ${index + 1}: ${unidad.titulo || ''}`;
+             sourceList.appendChild(unidadTitle);
+             hasContent = true;
+         }
+
+         for (let i = 0; i < maxSubtemas; i++) {
+             const subtemaNum = numeros[i] || `${index + 1}.${i + 1}`;
+             const subtemaTitulo = titulos[i] || `Subtema ${i+1} sin título`;
+             const contenidoId = `${unidad.id}_st${i}`;
+             const textoItem = `${subtemaNum} ${subtemaTitulo}`;
+
+             const div = document.createElement('div');
+             div.classList.add('draggable-item');
+             div.textContent = textoItem;
+             div.draggable = true;
+             div.dataset.contenidoId = contenidoId;
+             div.dataset.texto = textoItem; // Guardar el texto para mostrarlo al soltar
+
+             // Añadir event listeners para drag & drop
+             div.addEventListener('dragstart', handleDragStart);
+             div.addEventListener('dragend', handleDragEnd);
+             sourceList.appendChild(div);
+         }
+    });
+    sourcePanelMensaje.style.display = hasContent ? 'none' : 'block';
+    sourcePanelMensaje.textContent = hasContent ? '' : 'Añada contenido en las Unidades Temáticas para poder arrastrarlo.';
+    mostrarGridPlanificador(); // Reevaluar si mostrar el grid
+}
+
+// Función para mostrar/ocultar el grid y el mensaje
+function mostrarGridPlanificador() {
+    const paraleloSeleccionado = planificadorParaleloSelect.value;
+    const hasContentSource = sourceList.children.length > 0;
+
+    if (paraleloSeleccionado && hasContentSource) {
+        planificadorGrid.style.display = 'table';
+        planificadorMensaje.style.display = 'none';
+    } else if (!paraleloSeleccionado) {
+        planificadorGrid.style.display = 'none';
+        planificadorMensaje.textContent = "Seleccione un paralelo para planificar.";
+        planificadorMensaje.style.display = 'block';
+    } else { // Hay paralelo pero no contenido
+        planificadorGrid.style.display = 'none';
+        planificadorMensaje.textContent = "Añada contenido en las Unidades Temáticas.";
+        planificadorMensaje.style.display = 'block';
+    }
+}
+
+// Función para actualizar visualmente las drop zones (MODIFICADA PARA DÍAS)
+function actualizarDropZones() {
+    const paraleloSeleccionado = planificadorParaleloSelect.value;
+    const dayCells = planificadorBodySemanas.querySelectorAll('.day-cell.drop-zone'); // Seleccionar solo las drop zones
+
+    dayCells.forEach(cell => {
+        // Limpiar solo los items soltados, no el header del día
+        const droppedItems = cell.querySelectorAll('.dropped-item');
+        droppedItems.forEach(item => item.remove());
+
+        const dayKey = cell.dataset.dayKey; // Usar la clave completa "S{sem}-{dia}"
+
+        if (paraleloSeleccionado && planificacionActual[paraleloSeleccionado]?.[dayKey]) {
+            planificacionActual[paraleloSeleccionado][dayKey].forEach(item => {
+                mostrarItemEnDropZone(cell, item.id, item.texto);
+            });
+        }
+    });
+}
+
+// Función para añadir visualmente un item a una drop zone
+function mostrarItemEnDropZone(zone, contenidoId, textoItem) {
+    const div = document.createElement('div');
+    div.classList.add('dropped-item');
+    div.textContent = textoItem;
+    div.dataset.contenidoId = contenidoId;
+
+    // Añadir botón de eliminar
+    const deleteBtn = document.createElement('span');
+    deleteBtn.classList.add('delete-dropped');
+    deleteBtn.innerHTML = '&times;'; // Caracter 'x'
+    deleteBtn.title = 'Eliminar esta actividad de la semana';
+    deleteBtn.onclick = () => eliminarItemDeSemana(zone, contenidoId);
+
+    div.appendChild(deleteBtn);
+    zone.appendChild(div);
+}
+
+// Función para eliminar un item de una semana/día (MODIFICADA PARA DÍAS)
+function eliminarItemDeSemana(zone, contenidoId) { // 'zone' ahora es la celda del día
+    const dayKey = zone.dataset.dayKey;
+    const paraleloSeleccionado = planificadorParaleloSelect.value;
+
+    if (paraleloSeleccionado && planificacionActual[paraleloSeleccionado]?.[dayKey]) {
+        const itemsEnDia = planificacionActual[paraleloSeleccionado][dayKey];
+        const index = itemsEnDia.findIndex(item => item.id === contenidoId);
+        if (index > -1) {
+            itemsEnDia.splice(index, 1);
+            if (itemsEnDia.length === 0) {
+                delete planificacionActual[paraleloSeleccionado][dayKey]; // Eliminar entrada si día queda vacío
+            }
+            guardarEstadoPlanificacion();
+            actualizarDropZones(); // Refrescar vista (podría optimizarse para actualizar solo esta celda)
+        }
+    }
+}
+
+// --- Handlers de Eventos Drag & Drop ---
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+        id: e.target.dataset.contenidoId,
+        texto: e.target.dataset.texto
+    }));
+    e.target.style.opacity = '0.5'; // Feedback visual
+}
+
+function handleDragEnd(e) {
+    e.target.style.opacity = '1'; // Restaurar opacidad
+    // Limpiar estilos de drag-over de todas las zonas
+    document.querySelectorAll('.drop-zone.drag-over').forEach(zone => {
+        zone.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(e) {
+    e.preventDefault(); // Necesario para permitir drop
+    e.dataTransfer.dropEffect = 'copy'; // Indicar tipo de operación
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    // Asegurarse que el target directo sea la drop zone (día)
+    const targetCell = e.target.closest('.day-cell.drop-zone');
+    if (targetCell) {
+        targetCell.classList.add('drag-over');
+    }
+}
+
+
+function handleDragLeave(e) {
+    // Asegurarse que el target directo sea la drop zone (día)
+     const targetCell = e.target.closest('.day-cell.drop-zone');
+     if (targetCell) {
+        targetCell.classList.remove('drag-over');
+     }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const targetCell = e.target.closest('.day-cell.drop-zone'); // Asegurar que se suelta en una celda de día válida
+    if (targetCell) {
+        targetCell.classList.remove('drag-over');
+        const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+        const dayKey = targetCell.dataset.dayKey; // Usar la clave "S{sem}-{dia}"
+        const paraleloSeleccionado = planificadorParaleloSelect.value;
+
+        if (!paraleloSeleccionado) {
+            alert("Seleccione un paralelo antes de soltar actividades.");
+            return;
+        }
+
+// Añadir al estado (evitando duplicados en el mismo día)
+        if (!planificacionActual[paraleloSeleccionado]) planificacionActual[paraleloSeleccionado] = {};
+        if (!planificacionActual[paraleloSeleccionado][dayKey]) planificacionActual[paraleloSeleccionado][dayKey] = [];
+
+        const existe = planificacionActual[paraleloSeleccionado][dayKey].some(item => item.id === data.id);
+        if (!existe) {
+            planificacionActual[paraleloSeleccionado][dayKey].push({ id: data.id, texto: data.texto });
+            guardarEstadoPlanificacion();
+            mostrarItemEnDropZone(targetCell, data.id, data.texto);
+        } else {
+            alert(`"${data.texto}" ya está planificado para ${dayKey} en este paralelo.`);
+        }
+    }
+}
+
+// Función para guardar el estado actual en el input oculto
+function guardarEstadoPlanificacion() {
+    planificacionDataInput.value = JSON.stringify(planificacionActual);
+    console.log('Planificación guardada en input:', planificacionDataInput.value);
+    // Disparar evento para auto-save si está configurado
+    planificacionDataInput.dispatchEvent(new Event('change'));
+}
+
+
+// --- Modificar la función de carga de datos ---
+const originalOnloadHandlerDD = window.onload; // Renombrar para evitar conflicto si ya existe
+window.onload = function() {
+    // Llamar al handler original si existe (el que carga carreras, etc.)
+    if(originalOnloadHandlerDD && typeof originalOnloadHandlerDD === 'function') {
+        originalOnloadHandlerDD();
+    }
+
+    // ---- INICIO: Corrección para NO reinicializar en cada cambio de planificacionData ----
+    // Ya no necesitamos el MutationObserver para reinicializar todo.
+    // El auto-guardado se maneja con el listener 'change' del formulario que pusiste antes.
+    // Solo necesitamos asegurarnos de que el planificador se carga UNA VEZ que los datos
+    // iniciales del syllabus (si existen) se hayan cargado.
+
+    // Modificamos el listener del 'change' del código de asignatura para que
+    // inicialice/reinicialice el planificador DESPUÉS de cargar los datos.
+    const codigoInput = document.getElementById('codigo');
+    if (codigoInput) {
+        const originalCodigoChangeHandler = codigoInput.onchange; // Guardar handler existente si hay
+        codigoInput.addEventListener('change', function () {
+            // Ejecutar handler original si existe
+            if (originalCodigoChangeHandler && typeof originalCodigoChangeHandler === 'function') {
+                 originalCodigoChangeHandler.apply(this, arguments);
+            }
+            // Lógica para cargar datos del syllabus (la que ya tenías)
+            const codigo = this.value;
+            if (codigo) {
+                 google.script.run
+                    .withSuccessHandler(function (result) {
+                        if (result.success) {
+                             // ... (tu código existente para llenar el formulario)...
+
+                             // AQUÍ: Inicializar el planificador DESPUÉS de llenar el formulario
+                             console.log("Datos cargados, inicializando/reinicializando planificador...");
+                             planificacionActual = {}; // Resetear estado interno
+                             // Llenar el input oculto con los datos cargados ANTES de inicializar
+                             const planDataLoaded = result.data && result.data.planificacionData ? result.data.planificacionData : '{}';
+                             planificacionDataInput.value = planDataLoaded;
+                             inicializarPlanificadorDragDrop(); // Ahora inicializa con los datos correctos
+                        } else {
+                             // Código no encontrado, resetear planificador también
+                             console.log("Código no encontrado, reseteando planificador...");
+                             planificacionDataInput.value = '{}';
+                             planificacionActual = {};
+                             inicializarPlanificadorDragDrop();
+                        }
+                    })
+                    .withFailureHandler(function(error){
+                        // Error al cargar, resetear planificador
+                        console.error("Error al cargar datos, reseteando planificador...", error);
+                        planificacionDataInput.value = '{}';
+                        planificacionActual = {};
+                        inicializarPlanificadorDragDrop();
+                    })
+                    .cargarDatosSyllabus(codigo);
+            } else {
+                 // Código vacío, resetear planificador
+                 console.log("Código vacío, reseteando planificador...");
+                 planificacionDataInput.value = '{}';
+                 planificacionActual = {};
+                 inicializarPlanificadorDragDrop();
+            }
+        });
+    }
+
+        inicializarPlanificadorDragDrop();
+
+    const form = document.getElementById('syllabusForm');
+    form.addEventListener('reset', () => {
+        setTimeout(() => {
+            planificacionDataInput.value = '{}';
+            planificacionActual = {};
+            inicializarPlanificadorDragDrop();
+        }, 0);
+    });
+
+     // Asegurarse de que el paralelo se actualice si cambia en Info General
+    const paralelosSelectGeneral = document.getElementById('paralelos');
+    if (paralelosSelectGeneral) {
+        paralelosSelectGeneral.addEventListener('change', inicializarPlanificadorDragDrop);
+    } else {
+        console.warn("Elemento 'paralelos' no encontrado en Información General.");
+    }
+}; // Cierre del window.onload modificado
+
+// --- FIN LÓGICA DEL PLANIFICADOR (DRAG & DROP) ---
 
 </script>

@@ -131,6 +131,9 @@ function guardarSyllabus(carrera, datos) {
         "AprendizajeD",
         "BiblioD",
         "FechaD",
+         // Nueva columna para el planificador al final
+         "PlanificacionJSON",
+         "Fecha de creación",// Fecha al final
       ]);
     }
     
@@ -224,11 +227,40 @@ function guardarSyllabus(carrera, datos) {
       datos.aprendizajed,
       datos.bibliod,
       datos.fechad,
+
+      datos.planificacionData || '{}', // Guardar JSON como string, default a '{}'
+
       new Date(),
     ];
 
+    // --- Lógica para encontrar y actualizar fila o añadir nueva ---
+    const dataRange = sheet.getDataRange();
+    const values = dataRange.getValues();
+    const codigoIndex = 0; // Asumiendo que el código está en la primera columna (A)
+    let rowIndex = -1;
+
+    // Buscar si el código ya existe (empezando desde la fila 1, no la 0 que son headers)
+    for (let i = 1; i < values.length; i++) {
+        if (values[i][codigoIndex] && values[i][codigoIndex].toString() === datos.codigo.toString()) {
+            rowIndex = i + 1; // El índice de fila en Sheets API es 1-based
+            break;
+        }
+    }
+
+    if (rowIndex !== -1) {
+        // Si se encontró la fila, actualizarla
+        // Asegúrate de que el número de columnas en rowData coincida con el rango
+        const numColumns = Math.min(rowData.length, sheet.getLastColumn());
+        sheet.getRange(rowIndex, 1, 1, numColumns).setValues([rowData.slice(0, numColumns)]);
+        Logger.log(`Fila actualizada para el código ${datos.codigo} en la hoja ${sheet.getName()}`);
+    } else {
+        // Si no se encontró, añadir como nueva fila
+        sheet.appendRow(rowData);
+        Logger.log(`Nueva fila añadida para el código ${datos.codigo} en la hoja ${sheet.getName()}`);
+    }
+
     // Agregar nueva fila con los datos
-    sheet.appendRow(rowData);
+    //sheet.appendRow(rowData);
 
     // Generar documento
     return generarDocumentoSyllabus(carrera, datos);

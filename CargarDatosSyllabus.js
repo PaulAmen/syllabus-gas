@@ -125,6 +125,7 @@ function cargarDatosSyllabus(codigo) {
             AprendizajeD: "aprendizajed",
             BiblioD: "bibliod",
             FechaD: "fechad",
+            PlanificacionJSON: "planificacionData",
           };
 
           const key = mapeoCampos[header];

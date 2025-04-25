@@ -150,7 +150,8 @@ function mapearNombreCampo(nombreCampoFrontend) {
     "criteriosd": "CriteriosD",
     "aprendizajed": "AprendizajeD",
     "bibliod": "BiblioD",
-    "fechad": "FechaD"
+    "fechad": "FechaD",
+    "planificacionData": "PlanificacionJSON",
   };
   
   // Retornar el nombre mapeado o el original si no hay mapeo

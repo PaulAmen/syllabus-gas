@@ -1,74 +1,74 @@
 <!-- 1. Información General -->
 <div class="section">
-    <h2>1. Información General</h2>
+  <h2>1. Información General</h2>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="codigo">Código o nombre de la asignatura:</label>
-            <input type="text" id="codigo" name="codigo" required
+  <div class="form-row">
+    <div class="form-group">
+      <label for="codigo">Código o nombre de la asignatura:</label>
+      <input type="text" id="codigo" name="codigo" required
                 placeholder="Ingrese el código o nombre de la asignatura">
-        </div>
     </div>
+  </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="prerrequisito">Prerrequisito:</label>
-            <input type="text" id="prerrequisito" name="prerrequisito">
-        </div>
-        <div class="form-group">
-            <label for="correquisito">Correquisito:</label>
-            <input type="text" id="correquisito" name="correquisito">
-        </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="prerrequisito">Prerrequisito:</label>
+      <input type="text" id="prerrequisito" name="prerrequisito">
     </div>
+    <div class="form-group">
+      <label for="correquisito">Correquisito:</label>
+      <input type="text" id="correquisito" name="correquisito">
+    </div>
+  </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="facultad">Facultad:</label>
-            <select id="facultad" name="facultad" required>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="facultad">Facultad:</label>
+      <select id="facultad" name="facultad" required>
                 <option value="">Seleccione una facultad</option>
                 <option value="Ciencias Técnicas">Ciencias Técnicas</option>
             </select>
-        </div>
     </div>
+  </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="unidad">Unidad curricular / Eje de formación:</label>
-            <select id="unidad" name="unidad" required>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="unidad">Unidad curricular / Eje de formación:</label>
+      <select id="unidad" name="unidad" required>
                 <option value="">Seleccione una Unidad</option>
                 <option value="Unidad Básica">Unidad Básica</option>
                 <option value="Unidad Profesional">Unidad Profesional</option>
                 <option value="Unidad Complementaria">Unidad Complementaria</option>
                 <option value="Unidad de Integración Curricular/Titulación">Unidad de Integración Curricular/Titulación</option>
             </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-            <label for="campoFormacion">Campo de formación:</label>
-            <select id="campoFormacion" name="campoFormacion" required>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="campoFormacion">Campo de formación:</label>
+      <select id="campoFormacion" name="campoFormacion" required>
                 <option value="">Seleccione un campo</option>
                 <option value="Ciencias Básicas">Ciencias Básicas</option>
                 <option value="Ciencias de la Ingeniería">Ciencias de la Ingeniería</option>
                 <option value="Ingeniería Aplicada">Ingeniería Aplicada</option>
                 <option value="Ciencias Sociales y Humanísticas">Ciencias Sociales y Humanísticas</option>
             </select>
-        </div>
     </div>
+  </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="modalidad">Modalidad:</label>
-            <select id="modalidad" name="modalidad" required>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="modalidad">Modalidad:</label>
+      <select id="modalidad" name="modalidad" required>
                 <option value="">Seleccione una modalidad</option>
                 <option value="Presencial">Presencial</option>
                 <option value="Semipresencial">Semipresencial</option>
                 <option value="Virtual">Virtual</option>
             </select>
-        </div>
-        <div class="form-group">
-            <label for="periodo">Periodo:</label>
-            <select id="periodo" name="periodo" required>
+    </div>
+    <div class="form-group">
+      <label for="periodo">Periodo:</label>
+      <select id="periodo" name="periodo" required>
                 <option value="">Seleccione un periodo</option>
                 <option value="PI 2025">PI 2025</option>
                 <option value="PII 2025">PII 2025</option>
@@ -77,13 +77,13 @@
                 <option value="PI 2027">PI 2027</option>
                 <option value="PII 2027">PII 2027</option>
             </select>
-        </div>
     </div>
+  </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="nivel">Nivel:</label>
-            <select id="nivel" name="nivel" required>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="nivel">Nivel:</label>
+      <select id="nivel" name="nivel" required>
                 <option value="">Seleccione un Nivel</option>
                 <option value="Primero">Primero</option>
                 <option value="Segundo">Segundo</option>
@@ -94,40 +94,32 @@
                 <option value="Séptimo">Séptimo</option>
                 <option value="Octavo">Octavo</option>
             </select>
-        </div>
-        <div class="form-group">
-            <label for="paralelos">Paralelos:</label>
-            <select id="paralelos" name="paralelos" required>
-                <option value="">Seleccione un paralelo</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-            </select>
-        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="paralelos">Paralelos (separados por coma):</label>
+      <input type="text" id="paralelos" name="paralelos" required placeholder="Ej: A,B,C">
     </div>
 
     <div class="form-row">
-        <div class="form-group">
-            <label for="horarioc">Horario de clases:</label>
-            <input type="text" id="horarioc" name="horarioc" required>
-        </div>
-        <div class="form-group">
-            <label for="horariot">Horario para tutorías:</label>
-            <input type="text" id="horariot" name="horariot" required>
-        </div>
+      <div class="form-group">
+        <label for="horarioc">Horario de clases:</label>
+        <input type="text" id="horarioc" name="horarioc" required>
+      </div>
+      <div class="form-group">
+        <label for="horariot">Horario para tutorías:</label>
+        <input type="text" id="horariot" name="horariot" required>
+      </div>
     </div>
 
     <div class="form-row">
-        <div class="form-group">
-            <label for="nombreDocente">Profesor que imparte la asignatura:</label>
-            <input type="text" id="nombreDocente" name="nombreDocente" required>
-        </div>
-        <div class="form-group">
-            <label for="perfilDocente">Perfil del profesor:</label>
-            <textarea id="perfilDocente" name="perfilDocente" rows="3" required></textarea>
-        </div>
+      <div class="form-group">
+        <label for="nombreDocente">Profesor que imparte la asignatura:</label>
+        <input type="text" id="nombreDocente" name="nombreDocente" required>
+      </div>
+      <div class="form-group">
+        <label for="perfilDocente">Perfil del profesor:</label>
+        <textarea id="perfilDocente" name="perfilDocente" rows="3" required></textarea>
+      </div>
     </div>
-</div>
+  </div>
