@@ -276,15 +276,19 @@
     }
 
     .drop-zone {
-        min-height: 80px; /* Altura mínima para facilitar soltar */
-        border: 1px dashed #ccc; /* Borde inicial para indicar zona */
+        min-height: 80px;
+        /* Altura mínima para facilitar soltar */
+        border: 1px dashed #ccc;
+        /* Borde inicial para indicar zona */
         background-color: #ffffff;
         padding: 5px;
-        vertical-align: top; /* Alinear contenido arriba */
+        vertical-align: top;
+        /* Alinear contenido arriba */
     }
 
     .drop-zone.drag-over {
-        background-color: #e0f7fa; /* Color al pasar por encima */
+        background-color: #e0f7fa;
+        /* Color al pasar por encima */
         border-color: #007bff;
     }
 
@@ -296,9 +300,11 @@
         margin-bottom: 3px;
         border-radius: 3px;
         font-size: 0.85em;
-        white-space: normal; /* Permitir que el texto se ajuste */
+        white-space: normal;
+        /* Permitir que el texto se ajuste */
         word-break: break-word;
-        display: block; /* Asegurar que cada item esté en su línea */
+        display: block;
+        /* Asegurar que cada item esté en su línea */
         position: relative;
     }
 
@@ -307,63 +313,180 @@
         color: #dc3545;
         font-weight: bold;
         margin-left: 5px;
-        float: right; /* Posicionar a la derecha */
+        float: right;
+        /* Posicionar a la derecha */
     }
 
     /* Ajustes a la tabla del planificador */
     .planificador-table th {
-         vertical-align: top; /* Alinear títulos de semana arriba */
+        vertical-align: top;
+        /* Alinear títulos de semana arriba */
     }
 
-     .planificador-table td { /* Ahora las celdas TD son las drop-zones */
-         min-width: 100px; /* Ancho mínimo para columnas de semana */
-     }
+    .planificador-table td {
+        /* Ahora las celdas TD son las drop-zones */
+        min-width: 100px;
+        /* Ancho mínimo para columnas de semana */
+    }
 
-/* Ajustes para Celdas de Día */
-    .day-cell { /* Nueva clase para celdas de día */
+    /* Ajustes para Celdas de Día */
+    .day-cell {
+        /* Nueva clase para celdas de día */
         min-height: 80px;
-        border: 1px solid #e0e0e0; /* Borde más suave entre días */
+        border: 1px solid #e0e0e0;
+        /* Borde más suave entre días */
         background-color: #ffffff;
         padding: 3px;
         vertical-align: top;
-        font-size: 0.8em; /* Texto más pequeño en celdas */
-        min-width: 80px; /* Ancho mínimo para celdas de día */
+        font-size: 0.8em;
+        /* Texto más pequeño en celdas */
+        min-width: 80px;
+        /* Ancho mínimo para celdas de día */
     }
 
-    .day-cell.drop-zone.drag-over { /* Estilo al arrastrar sobre un día */
+    .day-cell.drop-zone.drag-over {
+        /* Estilo al arrastrar sobre un día */
         background-color: #e0f7fa;
         border: 1px dashed #007bff;
     }
 
-    .day-cell-header { /* Estilo para el nombre del día */
-      font-weight: bold;
-      display: block;
-      margin-bottom: 3px;
-      font-size: 0.9em;
-      color: #555;
-      text-align: center;
+    .day-cell-header {
+        /* Estilo para el nombre del día */
+        font-weight: bold;
+        display: block;
+        margin-bottom: 3px;
+        font-size: 0.9em;
+        color: #555;
+        text-align: center;
     }
 
-     .day-cell.holiday { /* Estilo para días festivos */
+    .day-cell.holiday {
+        /* Estilo para días festivos */
         background-color: #eeeeee;
         cursor: not-allowed;
-     }
+    }
 
-     .day-cell.holiday.drag-over { /* Evitar cambio de color en feriados */
+    .day-cell.holiday.drag-over {
+        /* Evitar cambio de color en feriados */
         background-color: #eeeeee;
         border: 1px solid #e0e0e0;
-     }
+    }
 
     /* Ajustar tabla principal si es necesario */
-     .planificador-table td { /* Redefinir para que ahora sea .day-cell */
-         /* Las propiedades se definen en .day-cell ahora */
-         padding: 0; /* Quitar padding del TD contenedor */
-         border: none; /* Quitar borde del TD contenedor */
-     }
-     /* Asegurar que la cabecera de semana tenga borde */
-     .planificador-table th {
+    .planificador-table td {
+        /* Redefinir para que ahora sea .day-cell */
+        /* Las propiedades se definen en .day-cell ahora */
+        padding: 0;
+        /* Quitar padding del TD contenedor */
+        border: none;
+        /* Quitar borde del TD contenedor */
+    }
+
+    /* Asegurar que la cabecera de semana tenga borde */
+    .planificador-table th {
         border: 1px solid #ddd;
-     }
+    }
 
 
+    /* Estilos Adicionales para Planificador Vertical */
+
+    .planificador-table {
+        width: 100%;
+        /* Hacer que la tabla ocupe el ancho disponible */
+        border-collapse: collapse;
+        /* Mejorar bordes */
+    }
+
+    .planificador-table th,
+    .planificador-table td {
+        border: 1px solid #ddd;
+        /* Borde estándar para todas las celdas */
+        padding: 5px;
+        /* Espaciado interno */
+        vertical-align: top;
+        /* Alinear contenido arriba */
+        text-align: left;
+        /* Alinear texto a la izquierda por defecto */
+    }
+
+    .planificador-table th {
+        /* Cabecera de días */
+        background-color: #f2f2f2;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .week-info-cell {
+        /* Celda con info de la semana */
+        background-color: #f8f9fa;
+        font-size: 0.9em;
+        font-weight: normal;
+    }
+
+    .day-cell {
+        /* Celda de día normal */
+        min-height: 100px;
+        /* Altura mínima para soltar */
+        min-width: 100px;
+        /* Ancho mínimo */
+        /* background-color: #ffffff; Ya no se necesita si se hereda de td */
+        /* padding: 3px; Heredado de td */
+        /* vertical-align: top; Heredado de td */
+        font-size: 0.9em;
+        /* Texto más pequeño en celdas */
+    }
+
+    .day-cell-header {
+        /* Nombre del día dentro de la celda */
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.9em;
+        color: #555;
+        text-align: center;
+    }
+
+    .day-cell.holiday {
+        /* Estilo para días festivos */
+        background-color: #eeeeee;
+        cursor: not-allowed;
+        text-align: center;
+    }
+
+    /* Asegurar que el contenedor permita scroll vertical si es muy largo */
+    #planificadorGridContainer {
+        max-height: 600px;
+        /* Aumentar altura máxima si se desea */
+        overflow-y: auto;
+        overflow-x: auto;
+        /* Mantener scroll horizontal por si acaso */
+    }
+
+    /* Quitar overflow-x del panel target si ya no es necesario */
+    /* #planificadorTargetPanel {
+         overflow-x: initial; /* Opcional: resetear scroll horizontal
+     } */
+
+    .empty-day-cell {
+        /* Estilo para celdas de días fuera del rango de la semana */
+        background-color: #fafafa;
+        min-height: 100px;
+        /* Mantener altura consistente */
+    }
+
+    /* Ajustes responsivos si son necesarios */
+    @media (max-width: 768px) {
+
+        .planificador-table th,
+        .planificador-table td {
+            font-size: 0.8em;
+            /* Texto más pequeño en móviles */
+            min-width: 60px;
+            /* Ancho menor */
+        }
+
+        .day-cell {
+            min-height: 80px;
+        }
+    }
 </style>
