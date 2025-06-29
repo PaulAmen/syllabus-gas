@@ -204,6 +204,7 @@ function cargarDatosSyllabusOriginal(codigo) {
                                  "Presencial",
                                  "Semipresencial",
                                  "Virtual",
+                                 "Híbrida",
                               ].includes(valor)
                            ) {
                               datos[key] = valor;
@@ -215,12 +216,16 @@ function cargarDatosSyllabusOriginal(codigo) {
                            const valor = row[index];
                            if (
                               [
-                                 "PI 2025",
-                                 "PII 2025",
-                                 "PI 2026",
-                                 "PII 2026",
-                                 "PI 2027",
-                                 "PII 2027",
+                                 "Primer Semestre",
+                                 "Segundo Semestre",
+                                 "Tercer Semestre",
+                                 "Cuarto Semestre",
+                                 "Quinto Semestre",
+                                 "Sexto Semestre",
+                                 "Séptimo Semestre",
+                                 "Octavo Semestre",
+                                 "Noveno Semestre",
+                                 "Décimo Semestre",
                               ].includes(valor)
                            ) {
                               datos[key] = valor;
@@ -232,44 +237,35 @@ function cargarDatosSyllabusOriginal(codigo) {
                            const valor = row[index];
                            if (
                               [
-                                 "Primero",
-                                 "Segundo",
-                                 "Tercero",
-                                 "Cuarto",
-                                 "Quinto",
-                                 "Sexto",
-                                 "Séptimo",
-                                 "Octavo",
+                                 "Primer Nivel",
+                                 "Segundo Nivel",
+                                 "Tercer Nivel",
+                                 "Cuarto Nivel",
+                                 "Quinto Nivel",
                               ].includes(valor)
                            ) {
                               datos[key] = valor;
                            } else {
                               datos[key] = "";
                            }
-                        } else if (key === "paralelos") {
-                           // Asegurar que el valor coincida con las opciones del select
-                           const valor = row[index];
-                           if (["A", "B", "C", "D", "E", "F"].includes(valor)) {
-                              datos[key] = valor;
-                           } else {
-                              datos[key] = "";
-                           }
                         } else {
-                           // Asegurarse de que los campos de texto no sean undefined
-                           datos[key] = row[index] || "";
+                           datos[key] = row[index];
                         }
                      }
                   }
                }
             });
 
-            return { success: true, data: datos };
+            return {
+               success: true,
+               data: datos,
+            };
          }
       }
 
       return {
          success: false,
-         message: `No se encontró el sílabo con código: ${codigo}`,
+         message: `No se encontró la asignatura con código o nombre: ${codigo}`,
       };
    } catch (error) {
       return {

@@ -574,6 +574,7 @@ function cargarDatosSyllabusFromService(codigo) {
                                  "Presencial",
                                  "Semipresencial",
                                  "Virtual",
+                                 "Híbrida",
                               ].includes(valor)
                            ) {
                               datos[key] = valor;

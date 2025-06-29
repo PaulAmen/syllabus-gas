@@ -1,23 +1,5 @@
-// Configuración de la aplicación
-const SPREADSHEET_ID = "1byVwunHRmWbgf0XOeOkHQNW6eiTZ-n4NO_61pb0mYcc"; // ID de la hoja de cálculo principal
-const TEMPLATE_DOC_ID = "19D3axgYKdKyf-C6O7yg2T8j3DLQjs8OyhEirmo3tXLk"; // ID del documento plantilla del sílabo
-const FOLDER_ID = "1kqGZPLQCxnod_zk2GqPhk9y6d06jOYWo";
-
-// NOTA: Las funciones principales (getCarreras, guardarSyllabus, cargarDatosSyllabus, actualizarCampoSyllabus)
-// ahora están en Main.js y services/SyllabusService.js para mejor organización y mantenibilidad.
-
-// Función para mostrar la interfaz de usuario
-function doGet() {
-   return HtmlService.createTemplateFromFile("Index")
-      .evaluate()
-      .setTitle("Generador de Sílabos")
-      .addMetaTag("viewport", "width=device-width, initial-scale=1");
-}
-
-// Función para incluir archivos HTML
-function include(filename) {
-   return HtmlService.createHtmlOutputFromFile(filename).getContent();
-}
+// NOTA: Las constantes principales están en config/Constants.js
+// Las funciones principales están en Main.js y services/SyllabusService.js
 
 // Función para generar documento del sílabo (mantenida aquí por ser específica)
 function generarDocumentoSyllabus(carrera, datos) {
